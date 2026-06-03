@@ -62,8 +62,11 @@ export default function FeatureSection() {
           {features.map(({ icon: Icon, eyebrow, title, description, color, soft }) => (
             <div
               key={title}
-              className="bg-(--bg-2) rounded-xl border border-(--border-subtle) p-6 flex flex-col gap-4"
-              style={{ boxShadow: 'var(--shadow-sm)' }}
+              className="bg-(--bg-2) rounded-xl border border-(--border-subtle) p-6 flex flex-col gap-4 transition-[transform,box-shadow] duration-200 hover:scale-[1.03] hover:shadow-md"
+              style={{
+                boxShadow: 'var(--shadow-sm)',
+                transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              }}
             >
               <div className={`w-11 h-11 rounded-xl ${soft} flex items-center justify-center`}>
                 <Icon size={22} className={color} strokeWidth={1.75} />

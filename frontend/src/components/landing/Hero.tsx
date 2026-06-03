@@ -29,7 +29,7 @@ export default function Hero() {
             style={{ fontSize: 'var(--text-body-l)', lineHeight: '1.7', maxWidth: '440px' }}
           >
             Kash vous aide à répartir vos revenus, suivre vos dépenses et
-            atteindre vos objectifs — avec une méthode simple et éprouvée.
+            atteindre vos objectifs — avec une méthode simple et aprouvée.
           </p>
 
           <div className="flex flex-wrap gap-3 pt-1">

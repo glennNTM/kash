@@ -5,6 +5,8 @@ import Onboarding from './pages/Onboarding'
 import DashboardLayout from './layouts/DashboardLayout'
 import Dashboard from './pages/Dashboard'
 import Statistiques from './pages/Statistiques'
+import Historique from './pages/Historique'
+import Objectifs from './pages/Objectifs'
 import Profil from './pages/Profil'
 
 export default function App() {
@@ -17,6 +19,8 @@ export default function App() {
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/statistiques" element={<Statistiques />} />
+          <Route path="/historique" element={<Historique />} />
+          <Route path="/objectifs" element={<Objectifs />} />
           <Route path="/profil" element={<Profil />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
