@@ -134,6 +134,10 @@
   --gradient-goal : linear-gradient(135deg, #1A2E24 0%, #162B22 100%);
 }
 
+/* Reset + styles d'éléments dans @layer base : sinon ces règles non-layerées
+   écrasent TOUTES les classes Tailwind (margin/padding/centrage). */
+@layer base {
+
 /* ── RESET & BASE ───────────────────────────────────────*/
 *,
 *::before,
@@ -233,3 +237,6 @@ select {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--t-3);
 }
+
+} /* fin @layer base */
+
