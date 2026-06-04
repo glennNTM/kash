@@ -37,7 +37,7 @@ Icons     : Lucide React
 Backend   : Node + Express + TypeScript (package manager : pnpm)
 Auth      : Better Auth (adaptateur Prisma)
 Sécurité  : Arcjet (rate limiting, protection bots, validation)
-ORM       : Prisma
+ORM       : Prisma 7 (driver adapter @prisma/adapter-pg, générateur "prisma-client", ESM)
 Base      : Supabase (Postgres hébergé — utilisé UNIQUEMENT comme base de données,
             pas pour son auth/storage/realtime, c'est Better Auth qui gère l'auth)
 Validation: Zod (partagée front/back autant que possible)
@@ -45,8 +45,13 @@ Validation: Zod (partagée front/back autant que possible)
 
 ### Décisions de stack à respecter
 
-- **Prisma + Supabase** : Supabase n'est qu'un Postgres hébergé. Aucune utilisation de Supabase Auth,
+- **Prisma 7 + Supabase** : Supabase n'est qu'un Postgres hébergé. Aucune utilisation de Supabase Auth,
   Storage ou Realtime. Le schéma vit dans `prisma/schema.prisma`, les accès passent par Prisma Client.
+  Spécificités v7 à respecter : générateur `prisma-client` (pas `prisma-client-js`) avec `output` custom
+  (`src/generated/prisma`) ; driver adapter `@prisma/adapter-pg` obligatoire à l'instanciation ;
+  ESM requis (`"type": "module"`) ; config dans `prisma.config.ts` à la racine ; client instancié
+  via le pattern Singleton dans `src/lib/prisma.ts`. Deux URLs : `DATABASE_URL` (pooler Supabase 6543)
+  et `DIRECT_URL` (direct 5432, pour les migrations).
 - **Tailwind v4** : pas de `tailwind.config.ts`. Config et tokens dans `globals.css`
   (`@import "tailwindcss"` + `@theme`). Syntaxe tokens : `bg-(--bg-1)`, `text-(--accent)` (parenthèses).
 - **Better Auth** gère sessions et OAuth. Arcjet se branche en amont des routes sensibles.
@@ -89,7 +94,7 @@ Ne jamais installer un composant shadcn pour du décoratif. Lire `design-system.
 
 ## Design system (résumé — détail dans design-system.md)
 
-- Polices (via Bunny Fonts, jamais Google) : Manrope (corps), Caveat (titres manuscrits), JetBrains Mono (montants)
+- Police : Plus Jakarta Sans (400/600/700)
 - Fond `#F7F7F5`, cartes `#FFFFFF`
 - Accent unique : vert `#1A9E6E`
 - Rouge `#DC2626` : dépassements/erreurs uniquement. Orange `#D97706` : alertes (>80% budget) uniquement.
@@ -182,9 +187,8 @@ goal_contributions (id, goal_id, month_id, amount)
 | Fichier | Contenu |
 |---|---|
 | `design-system.md` | Tokens, couleurs, typo, composants — lire avant tout travail UI |
-| `deploy.md` | Procédure de mise en production (Vercel + Railway + Supabase) |
 | `CLAUDE.md` | Ce fichier — contexte et contraintes du projet |
 
 ---
 
-*Kash · CLAUDE.md v3.0 · PERN · Prisma + Supabase · Juin 2026*
+*Kash · CLAUDE.md v3.2 · PERN · Prisma 7 + Supabase · Juin 2026*
