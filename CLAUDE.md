@@ -35,9 +35,9 @@ Charts    : Chart.js + react-chartjs-2
 Icons     : Lucide React
 
 Backend   : Node + Express + TypeScript (package manager : pnpm)
-Auth      : Better Auth (adaptateur Prisma)
+Auth      : Better Auth (adaptateur Drizzle)
 Sécurité  : Arcjet (rate limiting, protection bots, validation)
-ORM       : Prisma 7 (driver adapter @prisma/adapter-pg, générateur "prisma-client", ESM)
+ORM       : Drizzle ORM (driver postgres-js, schéma TypeScript, drizzle-kit pour migrations, ESM)
 Base      : Supabase (Postgres hébergé — utilisé UNIQUEMENT comme base de données,
             pas pour son auth/storage/realtime, c'est Better Auth qui gère l'auth)
 Validation: Zod (partagée front/back autant que possible)
@@ -45,13 +45,16 @@ Validation: Zod (partagée front/back autant que possible)
 
 ### Décisions de stack à respecter
 
-- **Prisma 7 + Supabase** : Supabase n'est qu'un Postgres hébergé. Aucune utilisation de Supabase Auth,
-  Storage ou Realtime. Le schéma vit dans `prisma/schema.prisma`, les accès passent par Prisma Client.
-  Spécificités v7 à respecter : générateur `prisma-client` (pas `prisma-client-js`) avec `output` custom
-  (`src/generated/prisma`) ; driver adapter `@prisma/adapter-pg` obligatoire à l'instanciation ;
-  ESM requis (`"type": "module"`) ; config dans `prisma.config.ts` à la racine ; client instancié
-  via le pattern Singleton dans `src/lib/prisma.ts`. Deux URLs : `DATABASE_URL` (pooler Supabase 6543)
-  et `DIRECT_URL` (direct 5432, pour les migrations).
+- **Drizzle ORM + Supabase** : Supabase n'est qu'un Postgres hébergé. Aucune utilisation de Supabase Auth,
+  Storage ou Realtime. Le schéma vit en TypeScript dans `src/db/schema/` (`auth.ts` pour les tables Better
+  Auth, `app.ts` pour le métier, `relations.ts` pour les relations, `index.ts` ré-exporte tout).
+  Spécificités à respecter : driver `postgres-js` (paquet `postgres`) avec `{ prepare: false }` obligatoire
+  (pooler transaction Supabase 6543, pas de prepared statements) ; client Drizzle instancié dans
+  `src/db/index.ts` et exporté sous `db` ; config drizzle-kit dans `drizzle.config.ts` à la racine ;
+  ESM requis (`"type": "module"`, imports relatifs avec extension `.js`) ; IDs en `text` (Better Auth pour
+  l'auth, `cuid2` via `@paralleldrive/cuid2` pour le métier). Deux URLs : `DATABASE_URL` (pooler Supabase
+  6543, runtime) et `DIRECT_URL` (direct 5432, utilisée par drizzle-kit pour push/pull/migrate).
+  Scripts : `pnpm db:generate`, `db:migrate`, `db:push`, `db:pull`, `db:studio`.
 - **Tailwind v4** : pas de `tailwind.config.ts`. Config et tokens dans `globals.css`
   (`@import "tailwindcss"` + `@theme`). Syntaxe tokens : `bg-(--bg-1)`, `text-(--accent)` (parenthèses).
 - **Better Auth** gère sessions et OAuth. Arcjet se branche en amont des routes sensibles.
@@ -73,7 +76,7 @@ Jamais npm sauf dernier recours (lenteur, failles supply-chain).
 Le frontend ne parle JAMAIS directement à la base. Flux unique :
 
 ```
-React (frontend) → API Express (backend) → Prisma → Supabase/Postgres
+React (frontend) → API Express (backend) → Drizzle → Supabase/Postgres
                          ↑
                    Better Auth (sessions) + Arcjet (protection)
 ```
@@ -177,7 +180,7 @@ goal_contributions (id, goal_id, month_id, amount)
 - Pour un **refactor** : préserve le comportement, signale les effets de bord.
 - Pour un **debug** : raisonne sur la cause, ne corrige pas au hasard.
 - Si je m'écarte d'une contrainte de ce fichier (sécurité, archi, conventions), **dis-le-moi**.
-- En cas de doute sur un outil, réfère-toi aux docs officielles (shadcn, Better Auth, Arcjet, Prisma, React Query, Zod, react-hot-toast, Chart.js, Tailwind v4).
+- En cas de doute sur un outil, réfère-toi aux docs officielles (shadcn, Better Auth, Arcjet, Drizzle ORM, React Query, Zod, react-hot-toast, Chart.js, Tailwind v4).
 - Va à l'essentiel. Pas de sur-explication quand je connais déjà le sujet.
 
 ---
@@ -191,4 +194,4 @@ goal_contributions (id, goal_id, month_id, amount)
 
 ---
 
-*Kash · CLAUDE.md v3.2 · PERN · Prisma 7 + Supabase · Juin 2026*
+*Kash · CLAUDE.md v3.3 · PERN · Drizzle ORM + Supabase · Juin 2026*
