@@ -10,13 +10,13 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-(--bg-glass) backdrop-blur-xl border-b border-(--border-subtle)">
-      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16 h-16 flex items-center justify-between">
-        <Link to="/" className="text-4xl font-bold text-(--accent) font-display">
+      <div className="relative max-w-6xl mx-auto px-6 md:px-10 lg:px-16 h-[72px] flex items-center justify-between">
+        <Link to="/" className="text-4xl font-bold text-(--accent) font-display leading-none">
           {APP_NAME}
         </Link>
 
-        {/* Nav desktop */}
-        <nav className="hidden md:flex items-center gap-6">
+        {/* Nav desktop — centrée */}
+        <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8">
           {NAV_LINKS.map(({ label, href }) => (
             <a
               key={href}
@@ -30,7 +30,7 @@ export default function SiteHeader() {
         </nav>
 
         {/* CTA desktop */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2">
           {!isLogin && (
             <Link
               to="/login"
@@ -44,7 +44,7 @@ export default function SiteHeader() {
             href={CHARIOW_EBOOK_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-semibold bg-(--accent) text-white px-5 py-2 rounded-full hover:bg-(--accent-hover) transition-colors active:scale-97"
+            className="text-sm font-semibold bg-(--accent) text-white px-5 py-2.5 rounded-full hover:bg-(--accent-hover) transition-colors active:scale-97"
             style={{ transitionDuration: 'var(--duration-fast)' }}
           >
             Obtenir l&apos;ebook

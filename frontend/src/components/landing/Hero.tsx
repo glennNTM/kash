@@ -4,11 +4,11 @@ import { CHARIOW_EBOOK_URL } from '../../lib/constants'
 
 export default function Hero() {
   return (
-    <section className="pt-20 pb-16 md:pt-28 md:pb-24 bg-(--bg-1)">
-      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16 grid md:grid-cols-2 gap-14 lg:gap-20 items-center">
+    <section className="pt-16 pb-20 md:pt-24 md:pb-28 bg-(--bg-1)">
+      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16 grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
 
-        {/* Texte gauche */}
-        <div className="flex flex-col gap-7">
+        {/* Bloc texte — gauche */}
+        <div className="flex flex-col gap-8">
           <span
             className="self-start font-semibold uppercase tracking-widest text-(--accent) bg-(--accent-soft) px-3 py-1.5 rounded-full"
             style={{ fontSize: 'var(--text-eyebrow)' }}
@@ -18,46 +18,58 @@ export default function Hero() {
 
           <h1
             className="font-display font-bold text-(--t-1)"
-            style={{ fontSize: 'var(--text-display-l)', lineHeight: '1.1', letterSpacing: 'normal' }}
+            style={{
+              fontSize: 'clamp(40px, 5.5vw, 64px)',
+              lineHeight: '1.1',
+              letterSpacing: 'normal',
+            }}
           >
-            Prenez le contrôle de{' '}
-            <span className="text-(--accent)">votre argent</span>
+            Prenez le contrôle de<br />
+            <span
+              className="text-(--accent) box-decoration-clone px-1 whitespace-nowrap"
+              style={{
+                background:
+                  'linear-gradient(transparent 62%, rgba(var(--accent-rgb), 0.18) 62%)',
+              }}
+            >
+              votre argent
+            </span>
           </h1>
 
           <p
             className="text-(--t-2)"
-            style={{ fontSize: 'var(--text-body-l)', lineHeight: '1.7', maxWidth: '440px' }}
+            style={{ fontSize: 'var(--text-heading-s)', lineHeight: '1.7', maxWidth: '480px' }}
           >
             Kash vous aide à répartir vos revenus, suivre vos dépenses et
             atteindre vos objectifs — avec une méthode simple et aprouvée.
           </p>
 
-          <div className="flex flex-wrap gap-3 pt-1">
+          <div className="flex gap-3 pt-1">
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 bg-(--accent) text-white font-semibold px-6 py-3.5 rounded-full hover:bg-(--accent-hover) transition-colors active:scale-97 text-sm"
-              style={{ transitionDuration: 'var(--duration-fast)' }}
+              className="inline-flex items-center gap-2 whitespace-nowrap bg-(--accent) text-white font-semibold px-6 py-3 rounded-full hover:bg-(--accent-hover) transition-colors active:scale-97"
+              style={{ transitionDuration: 'var(--duration-fast)', fontSize: 'var(--text-body)' }}
             >
               Commencer gratuitement
-              <ArrowRight size={15} strokeWidth={2.5} />
+              <ArrowRight size={16} strokeWidth={2.5} />
             </Link>
             <a
               href={CHARIOW_EBOOK_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-(--bg-2) text-(--t-1) font-semibold px-6 py-3.5 rounded-full hover:bg-(--bg-3) transition-colors border border-(--border-medium) text-sm"
-              style={{ transitionDuration: 'var(--duration-fast)' }}
+              className="inline-flex items-center gap-2 whitespace-nowrap bg-(--bg-2) text-(--t-1) font-semibold px-6 py-3 rounded-full hover:bg-(--bg-3) transition-colors border border-(--border-medium)"
+              style={{ transitionDuration: 'var(--duration-fast)', fontSize: 'var(--text-body)' }}
             >
               Lire l&apos;ebook gratuit
             </a>
           </div>
 
-          <p className="text-(--t-3)" style={{ fontSize: 'var(--text-caption)' }}>
+          <p className="text-(--t-3)" style={{ fontSize: 'var(--text-body-s)' }}>
             Gratuit · Aucune carte requise
           </p>
         </div>
 
-        {/* Placeholder dashboard — droite */}
+        {/* Mockup dashboard — droite */}
         <div className="hidden md:block">
           <div
             className="rounded-2xl overflow-hidden border border-(--border-medium) bg-(--bg-2)"
@@ -72,9 +84,9 @@ export default function Hero() {
             </div>
 
             {/* Contenu skeleton dashboard */}
-            <div className="p-5 flex flex-col gap-4">
+            <div className="p-6 flex flex-col gap-4">
               {/* Carte héro verte */}
-              <div className="rounded-xl p-4" style={{ background: 'var(--gradient-stat)' }}>
+              <div className="rounded-xl p-5" style={{ background: 'var(--gradient-stat)' }}>
                 <div className="h-3 w-20 rounded-full bg-white/30 mb-3" />
                 <div className="h-7 w-32 rounded-full bg-white/60 mb-1" />
                 <div className="flex gap-6 mt-3">

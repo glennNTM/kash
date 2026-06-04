@@ -6,8 +6,11 @@ import {
   Target,
   User,
   LogOut,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react'
 import { useSession, signOut } from '../hooks/useSession'
+import { useUiStore } from '../stores/uiStore'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -48,6 +51,9 @@ export default function DashboardLayout() {
   const navigate = useNavigate()
   const user = data?.user
 
+  const collapsed = useUiStore((s) => s.sidebarCollapsed)
+  const toggleSidebar = useUiStore((s) => s.toggleSidebar)
+
   async function handleSignOut() {
     await signOut()
     navigate('/login', { replace: true })
@@ -56,11 +62,35 @@ export default function DashboardLayout() {
   return (
     <div className="min-h-dvh bg-(--bg-1)">
       {/* ── Sidebar fixe (desktop ≥1024px) ─────────────────────────── */}
-      <aside className="hidden lg:flex fixed inset-y-0 left-0 w-60 flex-col bg-(--bg-2) border-r border-(--border-subtle)">
-        <div className="px-6 py-5">
-          <span className="font-display text-3xl text-(--accent) font-bold">
-            Kash
-          </span>
+      <aside
+        className={`hidden lg:flex fixed inset-y-0 left-0 flex-col bg-(--bg-2) border-r border-(--border-subtle) transition-[width] duration-(--duration-base) ${
+          collapsed ? 'w-[76px]' : 'w-60'
+        }`}
+        style={{ transitionTimingFunction: 'var(--ease-apple)' }}
+      >
+        <div
+          className={`flex items-center py-5 ${
+            collapsed ? 'justify-center px-3' : 'justify-between px-6'
+          }`}
+        >
+          {!collapsed && (
+            <span className="font-display text-3xl text-(--accent) font-bold">
+              Kash
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            aria-label={collapsed ? 'Déplier la sidebar' : 'Replier la sidebar'}
+            title={collapsed ? 'Déplier' : 'Replier'}
+            className="grid place-items-center size-9 rounded-md text-(--t-2) transition-colors duration-(--duration-fast) hover:bg-(--bg-3) hover:text-(--t-1)"
+          >
+            {collapsed ? (
+              <PanelLeftOpen size={18} strokeWidth={1.75} />
+            ) : (
+              <PanelLeftClose size={18} strokeWidth={1.75} />
+            )}
+          </button>
         </div>
 
         <nav className="flex-1 px-3 pb-6 flex flex-col gap-1">
@@ -69,16 +99,19 @@ export default function DashboardLayout() {
               key={index}
               to={to}
               end={to === '/dashboard'}
+              title={collapsed ? label : undefined}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-(--duration-fast) ${
+                  collapsed ? 'justify-center' : ''
+                } ${
                   isActive
                     ? 'bg-(--accent-soft) text-(--accent)'
                     : 'text-(--t-2) hover:bg-(--bg-3) hover:text-(--t-1)'
                 }`
               }
             >
-              <Icon size={18} strokeWidth={1.75} />
-              {label}
+              <Icon size={18} strokeWidth={1.75} className="shrink-0" />
+              {!collapsed && label}
             </NavLink>
           ))}
         </nav>
@@ -86,29 +119,43 @@ export default function DashboardLayout() {
         {/* Bloc profil + déconnexion */}
         {user && (
           <div className="border-t border-(--border-subtle) p-3">
-            <div className="flex items-center gap-3 px-2 py-2">
+            <div
+              className={`flex items-center gap-3 py-2 ${
+                collapsed ? 'justify-center px-0' : 'px-2'
+              }`}
+            >
               <Avatar name={user.name} image={user.image} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-(--t-1)">
-                  {user.name}
-                </p>
-                <p className="truncate text-xs text-(--t-3)">{user.email}</p>
-              </div>
+              {!collapsed && (
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-(--t-1)">
+                    {user.name}
+                  </p>
+                  <p className="truncate text-xs text-(--t-3)">{user.email}</p>
+                </div>
+              )}
             </div>
             <button
               type="button"
               onClick={handleSignOut}
-              className="mt-1 flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-(--t-2) transition-colors duration-(--duration-fast) hover:bg-(--bg-3) hover:text-(--error)"
+              title={collapsed ? 'Déconnexion' : undefined}
+              className={`mt-1 flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-(--t-2) transition-colors duration-(--duration-fast) hover:bg-(--bg-3) hover:text-(--error) ${
+                collapsed ? 'justify-center' : ''
+              }`}
             >
-              <LogOut size={18} strokeWidth={1.75} />
-              Déconnexion
+              <LogOut size={18} strokeWidth={1.75} className="shrink-0" />
+              {!collapsed && 'Déconnexion'}
             </button>
           </div>
         )}
       </aside>
 
       {/* ── Contenu ─────────────────────────────────────────────────── */}
-      <div className="lg:pl-60">
+      <div
+        className={`transition-[padding] duration-(--duration-base) ${
+          collapsed ? 'lg:pl-[76px]' : 'lg:pl-60'
+        }`}
+        style={{ transitionTimingFunction: 'var(--ease-apple)' }}
+      >
         <main className="mx-auto max-w-7xl px-4 py-6 pb-24 lg:pb-8">
           <Outlet />
         </main>
