@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight } from '../../lib/icons'
 import { CHARIOW_EBOOK_URL } from '../../lib/constants'
 
 export default function Hero() {

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2 } from '../../lib/icons'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import googleIcon from '../../assets/google-color-svgrepo-com.svg'

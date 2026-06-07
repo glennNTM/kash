@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight } from '../../lib/icons'
 import { formatPercent } from '../../lib/format'
 import type { DashboardStats } from '../../types/budget'
 

@@ -1,4 +1,4 @@
-import { Plus, SlidersHorizontal } from 'lucide-react'
+import { Plus, SlidersHorizontal } from '../../lib/icons'
 import type { Section, SectionStats } from '../../types/budget'
 import SectionCard from './SectionCard'
 

@@ -1,4 +1,4 @@
-import { Wallet, PiggyBank, Sparkles } from 'lucide-react'
+import { Wallet, PiggyBank, Sparkles } from '../../lib/icons'
 
 const features = [
   {

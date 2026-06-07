@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { LogOut, Mail, User, Bell, Shield, ChevronRight } from 'lucide-react'
+import { LogOut, Mail, User, Bell, Shield, ChevronRight } from '../lib/icons'
 import { useSession, signOut } from '../hooks/useSession'
 
 function initials(name: string): string {

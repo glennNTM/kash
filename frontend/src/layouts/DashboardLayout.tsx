@@ -8,7 +8,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
-} from 'lucide-react'
+} from '../lib/icons'
 import { useSession, signOut } from '../hooks/useSession'
 import { useUiStore } from '../stores/uiStore'
 
