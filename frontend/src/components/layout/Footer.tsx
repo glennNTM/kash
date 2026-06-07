@@ -1,50 +1,49 @@
-import { Link } from 'react-router-dom'
-import { APP_NAME, CHARIOW_EBOOK_URL } from '../../lib/constants'
+import { ArrowRight } from '../../lib/icons'
+import Logo from './Logo'
+import { APP_NAME, CHARIOW_EBOOK_URL, LEGAL_LINKS } from '../../lib/constants'
 
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-(--border-subtle) bg-(--bg-2)">
-      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
-        <div className="flex flex-col items-center md:items-start gap-2">
-          <Link to="/" className="text-lg font-bold text-(--accent) font-display">
-            {APP_NAME}
-          </Link>
-          <p className="text-xs text-(--t-3) max-w-xs text-center md:text-left">
-            La méthode 50/30/20 pour reprendre le contrôle de vos finances.
-          </p>
-        </div>
-
-        <nav className="flex flex-col items-center md:items-start gap-2">
-          <span className="text-xs font-semibold uppercase tracking-widest text-(--t-3) mb-1">
-            Ressources
-          </span>
+    <footer className="bg-(--accent-soft) border-t border-(--border-subtle)">
+      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
+        {/* Bande CTA */}
+        <div className="flex flex-col md:flex-row items-center md:items-center justify-between gap-6 py-12 border-b border-(--border-subtle)">
+          <div className="flex flex-col items-center md:items-start gap-3 text-center md:text-left">
+            <Logo />
+            <p className="text-sm text-(--t-2) max-w-xs">
+              La méthode 50/30/20 pour reprendre le contrôle de vos finances.
+            </p>
+          </div>
           <a
             href={CHARIOW_EBOOK_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-(--t-2) hover:text-(--accent) transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold bg-(--accent) text-white px-6 py-3 rounded-full hover:bg-(--accent-hover) transition-colors active:scale-97"
             style={{ transitionDuration: 'var(--duration-fast)' }}
           >
-            Ebook 50/30/20
+            Obtenir l&apos;ebook
+            <ArrowRight size={16} />
           </a>
-        </nav>
+        </div>
 
-        <nav className="flex flex-col items-center md:items-start gap-2">
-          <span className="text-xs font-semibold uppercase tracking-widest text-(--t-3) mb-1">
-            App
-          </span>
-          <Link
-            to="/login"
-            className="text-sm text-(--t-2) hover:text-(--accent) transition-colors"
-            style={{ transitionDuration: 'var(--duration-fast)' }}
-          >
-            Connexion
-          </Link>
-        </nav>
-      </div>
-
-      <div className="border-t border-(--border-subtle) py-4 text-center text-xs text-(--t-3)">
-        © {new Date().getFullYear()} {APP_NAME}. Tous droits réservés.
+        {/* Bas de page : copyright + liens légaux */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-6">
+          <p className="text-sm text-(--t-2)">
+            © {new Date().getFullYear()} {APP_NAME}. Tous droits réservés.
+          </p>
+          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            {LEGAL_LINKS.map(({ label, href }) => (
+              <a
+                key={label}
+                href={href}
+                className="text-sm text-(--t-2) hover:text-(--accent) transition-colors"
+                style={{ transitionDuration: 'var(--duration-fast)' }}
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+        </div>
       </div>
     </footer>
   )

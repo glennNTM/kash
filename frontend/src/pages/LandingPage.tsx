@@ -1,8 +1,10 @@
 import SiteHeader from "../components/layout/Header";
 import SiteFooter from "../components/layout/Footer";
 import Hero from "../components/landing/Hero";
-import FeatureSection from "../components/landing/FeatureSection";
 import VideoSection from "../components/landing/VideoSection";
+import FeatureSection from "../components/landing/FeatureSection";
+import EbookSection from "../components/landing/EbookSection";
+import FinalCTA from "../components/landing/FinalCTA";
 
 export default function LandingPage() {
   return (
@@ -10,8 +12,10 @@ export default function LandingPage() {
       <SiteHeader />
       <main className="flex-1">
         <Hero />
-        <FeatureSection />
         <VideoSection />
+        <FeatureSection />
+        <EbookSection />
+        <FinalCTA />
       </main>
       <SiteFooter />
     </div>

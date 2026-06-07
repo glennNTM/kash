@@ -1,5 +1,5 @@
 import * as RadixDialog from '@radix-ui/react-dialog'
-import { X } from 'lucide-react'
+import { X } from '../../lib/icons'
 
 interface DialogContentProps {
   title: string

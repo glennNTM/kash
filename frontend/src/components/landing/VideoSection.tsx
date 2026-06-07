@@ -1,8 +1,17 @@
-import { Play } from 'lucide-react'
+import LazyVideo from '../ui/LazyVideo'
+
+// Assets à placer dans `frontend/public/` (webp/mp4 + poster).
+// La source webm est servie en premier (meilleure compression), mp4 en repli
+// pour les navigateurs plus anciens.
+const VIDEO_SOURCES = [
+  { src: '/kash-demo.webm', type: 'video/webm' },
+  { src: '/kash-demo.mp4', type: 'video/mp4' },
+]
+const VIDEO_POSTER = '/kash-poster.jpg'
 
 export default function VideoSection() {
   return (
-    <section id="video" className="py-20 md:py-28 bg-(--bg-2)">
+    <section id="video" className="py-20 md:py-28 bg-(--bg-1)">
       <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
         <div className="text-center mb-12">
           <span
@@ -26,37 +35,15 @@ export default function VideoSection() {
           </p>
         </div>
 
-        {/* Placeholder vidéo 16:9 */}
+        {/* Vidéo 16:9, chargée paresseusement */}
         <div className="max-w-3xl mx-auto">
-          <div
-            className="relative w-full rounded-2xl overflow-hidden bg-(--bg-3) border border-(--border-medium) group cursor-pointer"
-            style={{ aspectRatio: '16/9', boxShadow: 'var(--shadow-lg)' }}
-          >
-            {/* Fond placeholder avec dégradé */}
-            <div
-              className="absolute inset-0"
-              style={{ background: 'var(--gradient-goal)' }}
+          <div className="rounded-2xl overflow-hidden" style={{ boxShadow: 'var(--shadow-lg)' }}>
+            <LazyVideo
+              sources={VIDEO_SOURCES}
+              poster={VIDEO_POSTER}
+              label="Démonstration de l'application Kash"
+              className="rounded-2xl border border-(--border-medium)"
             />
-
-            {/* Texte placeholder */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-              <button
-                aria-label="Lire la vidéo"
-                className="w-16 h-16 rounded-full bg-(--accent) text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform"
-                style={{ transitionDuration: 'var(--duration-fast)', boxShadow: 'var(--shadow-glow)' }}
-                disabled
-              >
-                <Play size={26} fill="white" strokeWidth={0} className="ml-1" />
-              </button>
-              <p className="text-sm text-(--t-2) font-medium">
-                Vidéo à venir
-              </p>
-            </div>
-
-            {/* Durée placeholder */}
-            <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs font-mono px-2 py-0.5 rounded">
-              2:00
-            </div>
           </div>
         </div>
       </div>

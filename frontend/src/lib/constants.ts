@@ -6,3 +6,11 @@ export const NAV_LINKS = [
   { label: 'Fonctionnalités', href: '#features' },
   { label: 'Comment ça marche', href: '#video' },
 ] as const
+
+// TODO: remplacer les `#` par les vraies routes/pages quand elles existeront.
+export const LEGAL_LINKS = [
+  { label: 'CGU', href: '#' },
+  { label: 'Confidentialité', href: '#' },
+  { label: 'Mentions légales', href: '#' },
+  { label: 'Contact', href: '#' },
+] as const
