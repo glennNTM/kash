@@ -2,10 +2,10 @@
 
 @theme {
 
-  /* Polices */
-  --font-display : "Plus Jakarta Sans", "Helvetica Neue", sans-serif;
-  --font-body    : "Plus Jakarta Sans", "Helvetica Neue", sans-serif;
-  --font-mono    : "Fira Code", "JetBrains Mono", monospace;
+  /* Polices (chargées via Bunny Fonts dans index.html — aucun appel à Google) */
+  --font-display : "Caveat", "Brush Script MT", cursive;      /* titres : manuscrit */
+  --font-body    : "Manrope", "Helvetica Neue", sans-serif;   /* corps + sous-titres */
+  --font-mono    : "JetBrains Mono", ui-monospace, "Consolas", monospace;  /* montants */
 
   /* Tailles de texte */
   --text-display-l : clamp(28px, 5vw, 48px);
@@ -134,6 +134,10 @@
   --gradient-goal : linear-gradient(135deg, #1A2E24 0%, #162B22 100%);
 }
 
+/* Reset + styles d'éléments dans @layer base : sinon ces règles non-layerées
+   écrasent TOUTES les classes Tailwind (margin/padding/centrage). */
+@layer base {
+
 /* ── RESET & BASE ───────────────────────────────────────*/
 *,
 *::before,
@@ -233,3 +237,6 @@ select {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--t-3);
 }
+
+} /* fin @layer base */
+
