@@ -1,13 +1,13 @@
 import { Router } from 'express'
 import { requireAuth } from '../middlewares/auth.middleware.js'
-import * as goalContributionsController from '../controllers/goal-contributions.controller.js'
+import { getByGoal, getById, create, update, remove } from '../controllers/goal-contributions.controller.js'
 
-const router: ReturnType<typeof Router> = Router()
+const goalContributionsRouter: ReturnType<typeof Router> = Router()
 
-router.get('/goal/:goalId', requireAuth, goalContributionsController.getByGoal)
-router.get('/:id', requireAuth, goalContributionsController.getById)
-router.post('/', requireAuth, goalContributionsController.create)
-router.put('/:id', requireAuth, goalContributionsController.update)
-router.delete('/:id', requireAuth, goalContributionsController.remove)
+goalContributionsRouter.get('/goal/:goalId', requireAuth, getByGoal)
+goalContributionsRouter.get('/:id', requireAuth, getById)
+goalContributionsRouter.post('/', requireAuth, create)
+goalContributionsRouter.put('/:id', requireAuth, update)
+goalContributionsRouter.delete('/:id', requireAuth, remove)
 
-export default router
+export default goalContributionsRouter

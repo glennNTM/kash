@@ -1,13 +1,13 @@
 import { Router } from 'express'
 import { requireAuth } from '../middlewares/auth.middleware.js'
-import * as expensesController from '../controllers/expenses.controller.js'
+import { getBySection, getById, create, update, remove } from '../controllers/expenses.controller.js'
 
-const router: ReturnType<typeof Router> = Router()
+const expensesRouter: ReturnType<typeof Router> = Router()
 
-router.get('/section/:sectionId', requireAuth, expensesController.getBySection)
-router.get('/:id', requireAuth, expensesController.getById)
-router.post('/', requireAuth, expensesController.create)
-router.put('/:id', requireAuth, expensesController.update)
-router.delete('/:id', requireAuth, expensesController.remove)
+expensesRouter.get('/section/:sectionId', requireAuth, getBySection)
+expensesRouter.get('/:id', requireAuth, getById)
+expensesRouter.post('/', requireAuth, create)
+expensesRouter.put('/:id', requireAuth, update)
+expensesRouter.delete('/:id', requireAuth, remove)
 
-export default router
+export default expensesRouter
