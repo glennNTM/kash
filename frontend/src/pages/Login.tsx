@@ -4,7 +4,7 @@ import SiteFooter from "../components/layout/Footer";
 import LoginForm from "../components/auth/LoginForm";
 import { APP_NAME } from "../lib/constants";
 
-export default function Login() {
+export default function Login({ mode = 'login' }: { mode?: 'login' | 'register' }) {
   return (
     <div className="min-h-dvh flex flex-col bg-(--bg-1)">
       <SiteHeader />
@@ -31,7 +31,7 @@ export default function Login() {
 
         {/* Panneau droite — form centré */}
         <div className="flex-1 flex items-center justify-center px-6 py-12">
-          <LoginForm />
+          <LoginForm mode={mode} />
         </div>
       </main>
       <SiteFooter />

@@ -10,6 +10,8 @@ const {
   BETTER_AUTH_URL,
   ARCJET_KEY,
   FRONTEND_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
 } = process.env;
 
 if (!DATABASE_URL) throw new Error('DATABASE_URL manquante');
@@ -25,4 +27,7 @@ export const env = {
   BETTER_AUTH_URL,
   ARCJET_KEY: ARCJET_KEY ?? '',
   FRONTEND_URL,
+  // Optionnels : si absents, le provider Google n'est pas activé (cf. lib/auth.ts).
+  GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID ?? '',
+  GOOGLE_CLIENT_SECRET: GOOGLE_CLIENT_SECRET ?? '',
 } as const;
