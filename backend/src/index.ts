@@ -4,6 +4,7 @@ import xssClean from 'xss-clean'
 import cookieParser from 'cookie-parser'
 import { env } from './config/env.js'
 import apiRouter from './routes/index.js'
+import router from './routes/index.js'
 
 const app = express()
 
