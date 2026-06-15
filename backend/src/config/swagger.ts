@@ -1,7 +1,10 @@
+import express from 'express'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
-import type { Express } from 'express'
 import { env } from './env.js'
+
+// La doc est servie sur son propre port, distinct de l'API.
+export const DOCS_PORT = 10000
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -15,6 +18,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
+        // Cible des requêtes "Try it out" : l'API tourne sur env.PORT, pas sur le port de la doc.
         url: `http://localhost:${env.PORT}`,
         description: 'Serveur de développement',
       },
@@ -39,13 +43,20 @@ const options: swaggerJsdoc.Options = {
 
 const swaggerSpec = swaggerJsdoc(options)
 
-export const setupSwagger = (app: Express): void => {
+/**
+ * Démarre un serveur Express dédié à la documentation Swagger, sur DOCS_PORT,
+ * indépendant de l'API. Le "Try it out" vise l'API (cf. servers.url ci-dessus) ;
+ * l'origine de la doc doit donc être autorisée par le CORS de l'API.
+ */
+export const setupSwagger = (): void => {
+  const docsApp = express()
+
   const swaggerUiOptions: swaggerUi.SwaggerUiOptions = {
     explorer: true,
     swaggerOptions: {
       persistAuthorization: true,
       tryItOutEnabled: true,
-      // Envoie le cookie de session avec les requêtes "Try it out" (même origine).
+      // Envoie le cookie de session avec les requêtes "Try it out".
       requestInterceptor: (req: { credentials?: string }) => {
         req.credentials = 'include'
         return req
@@ -53,7 +64,10 @@ export const setupSwagger = (app: Express): void => {
     },
   }
 
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
+  docsApp.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
+  docsApp.get('/', (_req, res) => res.redirect('/api-docs'))
 
-  console.log(`Documentation Swagger disponible sur: http://localhost:${env.PORT}/api-docs`)
+  docsApp.listen(DOCS_PORT, () => {
+    console.log(`Documentation Swagger disponible sur: http://localhost:${DOCS_PORT}/api-docs`)
+  })
 }

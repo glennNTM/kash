@@ -8,7 +8,7 @@ import { toNodeHandler } from 'better-auth/node'
 import { auth } from './lib/auth.js'
 import { errorHandler } from './middlewares/error.middleware.js'
 import securityMiddleware from './middlewares/security.js'
-import { setupSwagger } from './config/swagger.js'
+import { setupSwagger, DOCS_PORT } from './config/swagger.js'
 
 const app = express()
 
@@ -16,7 +16,8 @@ app.use(helmet())
 
 app.use(
   cors({
-    origin: env.FRONTEND_URL,
+    // Frontend + serveur de doc Swagger (pour que "Try it out" atteigne l'API).
+    origin: [env.FRONTEND_URL, `http://localhost:${DOCS_PORT}`],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   }),
@@ -34,8 +35,8 @@ app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-// Documentation interactive de l'API (dev) : http://localhost:<PORT>/api-docs
-setupSwagger(app)
+// Documentation interactive de l'API (dev), sur son propre port : http://localhost:10000/api-docs
+setupSwagger()
 
 // Rate limit plus large sur l'API métier (le dashboard déclenche plusieurs requêtes au chargement).
 app.use('/api', securityMiddleware(60), apiRouter)
