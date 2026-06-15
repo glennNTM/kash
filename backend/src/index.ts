@@ -1,12 +1,12 @@
 import express, { type Request, type Response } from 'express'
 import helmet from 'helmet'
-import xssClean from 'xss-clean'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import { env } from './config/env.js'
 import apiRouter from './routes/index.js'
 import { toNodeHandler } from 'better-auth/node'
 import { auth } from './lib/auth.js'
+import { errorHandler } from './middlewares/error.middleware.js'
 
 const app = express()
 
@@ -25,7 +25,6 @@ app.use(
 app.all('/api/auth/*splat', toNodeHandler(auth))
 
 app.use(express.json())
-app.use(xssClean())
 app.use(cookieParser())
 
 app.get('/health', (_req: Request, res: Response) => {
@@ -33,6 +32,9 @@ app.get('/health', (_req: Request, res: Response) => {
 })
 
 app.use('/api', apiRouter)
+
+// Gestionnaire d'erreurs central : monté en dernier pour capter ce que les routes propagent.
+app.use(errorHandler)
 
 app.listen(env.PORT, () => {
   console.log(`Serveur sur http://localhost:${env.PORT}`)
