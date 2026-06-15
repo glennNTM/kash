@@ -22,7 +22,8 @@ app.use(
 
 // Le handler Better Auth doit être monté AVANT express.json() :
 // il lit lui-même le corps brut des requêtes, qu'un parser global casserait.
-app.all('/api/auth/*splat', toNodeHandler(auth))
+// Rate limit strict sur l'auth : protège login/register du brute-force.
+app.all('/api/auth/*splat', securityMiddleware(10), toNodeHandler(auth))
 
 app.use(express.json())
 app.use(cookieParser())
@@ -31,7 +32,8 @@ app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-app.use('/api', apiRouter)
+// Rate limit plus large sur l'API métier (le dashboard déclenche plusieurs requêtes au chargement).
+app.use('/api', securityMiddleware(60), apiRouter)
 
 // Gestionnaire d'erreurs central : monté en dernier pour capter ce que les routes propagent.
 app.use(errorHandler)

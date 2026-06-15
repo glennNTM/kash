@@ -17,6 +17,8 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@arcjet/inspect": "^1.5.0",
+    "@arcjet/node": "^1.5.0",
     "@paralleldrive/cuid2": "^3.3.0",
     "better-auth": "^1.6.15",
     "cookie-parser": "^1.4.7",
