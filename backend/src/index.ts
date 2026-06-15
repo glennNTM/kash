@@ -7,6 +7,7 @@ import apiRouter from './routes/index.js'
 import { toNodeHandler } from 'better-auth/node'
 import { auth } from './lib/auth.js'
 import { errorHandler } from './middlewares/error.middleware.js'
+import securityMiddleware from './middlewares/security.js'
 
 const app = express()
 
