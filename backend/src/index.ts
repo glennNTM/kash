@@ -6,7 +6,7 @@ import { env } from './config/env.js'
 import apiRouter from './routes/index.js'
 import { toNodeHandler } from 'better-auth/node'
 import { auth } from './lib/auth.js'
-import securityMiddleware from './middlewares/security.js'
+import { errorHandler } from './middlewares/error.middleware.js'
 
 const app = express()
 
@@ -34,6 +34,9 @@ app.get('/health', (_req: Request, res: Response) => {
 
 // Rate limit plus large sur l'API métier (le dashboard déclenche plusieurs requêtes au chargement).
 app.use('/api', securityMiddleware(60), apiRouter)
+
+// Gestionnaire d'erreurs central : monté en dernier pour capter ce que les routes propagent.
+app.use(errorHandler)
 
 app.listen(env.PORT, () => {
   console.log(`Serveur sur http://localhost:${env.PORT}`)
