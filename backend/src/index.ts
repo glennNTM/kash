@@ -8,6 +8,7 @@ import { toNodeHandler } from 'better-auth/node'
 import { auth } from './lib/auth.js'
 import { errorHandler } from './middlewares/error.middleware.js'
 import securityMiddleware from './middlewares/security.js'
+import { setupSwagger } from './config/swagger.js'
 
 const app = express()
 
@@ -32,6 +33,9 @@ app.use(cookieParser())
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
+
+// Documentation interactive de l'API (dev) : http://localhost:<PORT>/api-docs
+setupSwagger(app)
 
 // Rate limit plus large sur l'API métier (le dashboard déclenche plusieurs requêtes au chargement).
 app.use('/api', securityMiddleware(60), apiRouter)

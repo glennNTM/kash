@@ -1,61 +1,59 @@
-// config/swagger.js
-import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+import type { Express } from 'express'
+import { env } from './env.js'
 
-// Importe tous les commentaires Swagger
-import '../docs/index.ts';
-
-const options = {
+const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
       title: 'API Kash',
       version: '1.0.0',
-      description: 'Documentation de l\'API Kash',
+      description:
+        "Documentation de l'API Kash. Toutes les routes /api/* exigent une session Better Auth " +
+        '(cookie envoyé automatiquement par le navigateur). Réponses au format { data } ou { error }.',
     },
     servers: [
       {
-        url: 'http://localhost:10000',
+        url: `http://localhost:${env.PORT}`,
         description: 'Serveur de développement',
-      },
-      {
-        url: '',
-        description: 'Serveur de production',
       },
     ],
     components: {
       securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+        // Better Auth gère l'auth par session cookie (pas de JWT bearer).
+        cookieAuth: {
+          type: 'apiKey',
+          in: 'cookie',
+          name: 'better-auth.session_token',
         },
       },
     },
+    // Sécurité appliquée par défaut à toutes les routes (surchargée localement si besoin).
+    security: [{ cookieAuth: [] }],
   },
-  apis: ['./docs/**/*.js'], // centralisation ici
-};
+  // swagger-jsdoc lit les commentaires @swagger directement sur le disque via ce glob.
+  // On pointe les sources .ts (les commentaires sont strippés à la compilation).
+  apis: ['./src/docs/*.ts'],
+}
 
-const swaggerSpec = swaggerJsdoc(options);
+const swaggerSpec = swaggerJsdoc(options)
 
-export const setupSwagger = app => {
-  // Configuration Swagger UI avec options pour les tests
-  const swaggerUiOptions = {
+export const setupSwagger = (app: Express): void => {
+  const swaggerUiOptions: swaggerUi.SwaggerUiOptions = {
     explorer: true,
     swaggerOptions: {
       persistAuthorization: true,
       tryItOutEnabled: true,
-      requestInterceptor: req => {
-        // Ajouter automatiquement les headers CORS
-        req.headers['Access-Control-Allow-Origin'] = '*';
-        req.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
-        req.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
-        return req;
+      // Envoie le cookie de session avec les requêtes "Try it out" (même origine).
+      requestInterceptor: (req: { credentials?: string }) => {
+        req.credentials = 'include'
+        return req
       },
     },
-  };
+  }
 
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
 
-  console.log('Documentation Swagger disponible sur: http://localhost:10000/api-docs');
-};
+  console.log(`Documentation Swagger disponible sur: http://localhost:${env.PORT}/api-docs`)
+}
