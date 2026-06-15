@@ -17,6 +17,8 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@arcjet/inspect": "^1.5.0",
+    "@arcjet/node": "^1.5.0",
     "@paralleldrive/cuid2": "^3.3.0",
     "better-auth": "^1.6.15",
     "cookie-parser": "^1.4.7",
@@ -25,8 +27,7 @@
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
     "helmet": "^8.2.0",
-    "postgres": "^3.4.9",
-    "xss-clean": "^0.1.4"
+    "postgres": "^3.4.9"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
