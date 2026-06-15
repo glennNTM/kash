@@ -1,16 +1,7 @@
 import type { Request, Response } from 'express'
 import * as sectionsService from '../services/sections.service.js'
-import { BadRequestError } from '../lib/errors.js'
+import { parseId } from '../lib/params.js'
 import type { CreateSectionInput, UpdateSectionInput } from '../validators/sections.schema.js'
-
-// Convertit un paramètre d'URL en ID entier valide, ou lève une 400.
-function parseId(raw: string | string[] | undefined, label: string): number {
-  const id = typeof raw === 'string' ? Number(raw) : NaN
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new BadRequestError(`${label} invalide.`)
-  }
-  return id
-}
 
 /**
  * @route   GET /api/sections/month/:monthId

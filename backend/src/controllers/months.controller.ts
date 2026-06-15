@@ -1,5 +1,7 @@
 import type { Request, Response } from 'express'
 import * as monthsService from '../services/months.service.js'
+import { parseId } from '../lib/params.js'
+import type { CreateMonthInput, UpdateMonthInput } from '../validators/months.schema.js'
 
 /**
  * @route   GET /api/months
@@ -7,21 +9,9 @@ import * as monthsService from '../services/months.service.js'
  * @access  Authentifié
  */
 export async function getAll(_req: Request, res: Response): Promise<void> {
-  try {
-    const userId = res.locals['userId'] as string
-
-    if (!userId) {
-      res.status(401).json({ error: 'Non authentifié.' })
-      return
-    }
-
-    const data = await monthsService.findAll(userId)
-
-    res.status(200).json({ data })
-  } catch (error) {
-    console.error('Erreur GET /api/months :', error)
-    res.status(500).json({ error: 'Erreur interne du serveur. Impossible de récupérer les mois.' })
-  }
+  const userId = res.locals['userId'] as string
+  const data = await monthsService.findAll(userId)
+  res.status(200).json({ data })
 }
 
 /**
@@ -30,47 +20,49 @@ export async function getAll(_req: Request, res: Response): Promise<void> {
  * @access  Authentifié
  */
 export async function getById(req: Request, res: Response): Promise<void> {
-  try {
-    const userId = res.locals['userId'] as string
+  const userId = res.locals['userId'] as string
+  const id = parseId(req.params['id'], 'ID du mois')
+  const data = await monthsService.findById(id, userId)
 
-    if (!userId) {
-      res.status(401).json({ error: 'Non authentifié.' })
-      return
-    }
-
-    // Récupération et validation de l'ID depuis les paramètres d'URL
-    const id = parseInt(req.params['id'] as string, 10)
-
-    if (isNaN(id)) {
-      res.status(400).json({ error: 'ID du mois invalide.' })
-      return
-    }
-
-    const data = await monthsService.findById(id, userId)
-
-    if (!data) {
-      res.status(404).json({ error: 'Mois non trouvé.' })
-      return
-    }
-
-    res.status(200).json({ data })
-  } catch (error) {
-    console.error('Erreur GET /api/months/:id :', error)
-    res.status(500).json({ error: 'Erreur interne du serveur. Impossible de récupérer le mois.' })
+  if (!data) {
+    res.status(404).json({ error: 'Mois non trouvé.' })
+    return
   }
+
+  res.status(200).json({ data })
 }
 
+/**
+ * @route   POST /api/months
+ * @desc    Crée un mois (corps validé par Zod en amont)
+ * @access  Authentifié
+ */
 export async function create(req: Request, res: Response): Promise<void> {
-  const data = await monthsService.create(req.body)
+  const userId = res.locals['userId'] as string
+  const data = await monthsService.create(req.body as CreateMonthInput, userId)
   res.status(201).json({ data })
 }
 
+/**
+ * @route   PUT /api/months/:id
+ * @desc    Met à jour un mois
+ * @access  Authentifié
+ */
 export async function update(req: Request, res: Response): Promise<void> {
-  const data = await monthsService.update(Number(req.params['id']), req.body)
-  res.json({ data })
+  const userId = res.locals['userId'] as string
+  const id = parseId(req.params['id'], 'ID du mois')
+  const data = await monthsService.update(id, req.body as UpdateMonthInput, userId)
+  res.status(200).json({ data })
 }
 
+/**
+ * @route   DELETE /api/months/:id
+ * @desc    Supprime un mois
+ * @access  Authentifié
+ */
 export async function remove(req: Request, res: Response): Promise<void> {
-  await monthsService.remove(Number(req.params['id']))
+  const userId = res.locals['userId'] as string
+  const id = parseId(req.params['id'], 'ID du mois')
+  await monthsService.remove(id, userId)
   res.status(204).send()
 }
