@@ -29,7 +29,7 @@ function initials(name: string): string {
     .join('')
 }
 
-function Avatar({ name, image }: { name: string; image?: string }) {
+function Avatar({ name, image }: { name: string; image?: string | null }) {
   if (image) {
     return (
       <img

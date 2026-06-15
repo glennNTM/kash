@@ -3,15 +3,20 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Eye, EyeOff, Loader2 } from '../../lib/icons'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
+import { signIn, signUp } from '../../lib/auth-client'
 import googleIcon from '../../assets/google-color-svgrepo-com.svg'
 
-const loginSchema = z.object({
+const authSchema = z.object({
+  name: z.string().min(2, 'Nom trop court').optional(),
   email: z.string().email('Adresse e-mail invalide'),
   password: z.string().min(8, 'Mot de passe trop court (8 caractères minimum)'),
 })
 
-type LoginData = z.infer<typeof loginSchema>
+type AuthData = z.infer<typeof authSchema>
+
+type Mode = 'login' | 'register'
 
 function inputClass(hasError: boolean) {
   return [
@@ -24,19 +29,64 @@ function inputClass(hasError: boolean) {
   ].join(' ')
 }
 
-export default function LoginForm() {
+export default function LoginForm({ mode = 'login' }: { mode?: Mode }) {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginData>({ resolver: zodResolver(loginSchema) })
+  } = useForm<AuthData>({ resolver: zodResolver(authSchema) })
 
-  const onSubmit = async (_: LoginData) => {
-    // TODO: câbler Better Auth
-    await new Promise((r) => setTimeout(r, 800))
+  const isRegister = mode === 'register'
+
+  const onSubmit = async (values: AuthData) => {
+    if (isRegister) {
+      if (!values.name) {
+        toast.error('Le nom est requis.')
+        return
+      }
+      const { error } = await signUp.email({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+      })
+      if (error) {
+        toast.error(error.message ?? "Échec de l'inscription.")
+        return
+      }
+      // autoSignIn est activé côté backend → session déjà posée.
+      navigate('/onboarding', { replace: true })
+      return
+    }
+
+    const { error } = await signIn.email({
+      email: values.email,
+      password: values.password,
+    })
+    if (error) {
+      toast.error(error.message ?? 'Identifiants invalides.')
+      return
+    }
+    navigate('/dashboard', { replace: true })
   }
+
+  async function handleGoogle() {
+    setGoogleLoading(true)
+    const { error } = await signIn.social({
+      provider: 'google',
+      callbackURL: `${window.location.origin}/dashboard`,
+    })
+    // En cas de succès, le navigateur est redirigé vers Google : pas de retour ici.
+    if (error) {
+      toast.error(error.message ?? 'Connexion Google impossible.')
+      setGoogleLoading(false)
+    }
+  }
+
+  const busy = isSubmitting || googleLoading
 
   return (
     <div
@@ -48,17 +98,45 @@ export default function LoginForm() {
           className="font-display font-bold text-(--t-1) mb-2"
           style={{ fontSize: 'var(--text-display-m)', letterSpacing: 'normal' }}
         >
-          Connexion
+          {isRegister ? 'Créer un compte' : 'Connexion'}
         </h1>
         <p className="text-sm text-(--t-2)">
-          Pas encore de compte ?{' '}
-          <Link to="/login" className="text-(--accent) font-medium hover:underline">
-            Créer un compte
+          {isRegister ? 'Déjà un compte ?' : 'Pas encore de compte ?'}{' '}
+          <Link
+            to={isRegister ? '/login' : '/sign-up'}
+            className="text-(--accent) font-medium hover:underline"
+          >
+            {isRegister ? 'Se connecter' : 'Créer un compte'}
           </Link>
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+        {/* Nom — inscription uniquement */}
+        {isRegister && (
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="name" className="text-sm font-semibold text-(--t-1)">
+              Nom
+            </label>
+            <input
+              id="name"
+              type="text"
+              autoComplete="name"
+              placeholder="Votre nom"
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? 'name-error' : undefined}
+              className={inputClass(!!errors.name)}
+              style={{ fontSize: 'var(--text-body-l)', transitionDuration: 'var(--duration-fast)' }}
+              {...register('name')}
+            />
+            {errors.name && (
+              <p id="name-error" role="alert" className="text-xs text-(--error) mt-0.5">
+                {errors.name.message}
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Email */}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="email" className="text-sm font-semibold text-(--t-1)">
@@ -88,18 +166,20 @@ export default function LoginForm() {
             <label htmlFor="password" className="text-sm font-semibold text-(--t-1)">
               Mot de passe
             </label>
-            <button
-              type="button"
-              className="text-xs text-(--accent) hover:underline font-medium"
-            >
-              Mot de passe oublié ?
-            </button>
+            {!isRegister && (
+              <button
+                type="button"
+                className="text-xs text-(--accent) hover:underline font-medium"
+              >
+                Mot de passe oublié ?
+              </button>
+            )}
           </div>
           <div className="relative">
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
+              autoComplete={isRegister ? 'new-password' : 'current-password'}
               placeholder="••••••••"
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? 'password-error' : undefined}
@@ -127,12 +207,12 @@ export default function LoginForm() {
         {/* Submit */}
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={busy}
           className="w-full flex items-center justify-center gap-2 bg-(--accent) text-white font-semibold py-3.5 rounded-full hover:bg-(--accent-hover) transition-colors active:scale-97 disabled:opacity-60 disabled:cursor-not-allowed mt-1"
           style={{ fontSize: 'var(--text-body-l)', transitionDuration: 'var(--duration-fast)' }}
         >
           {isSubmitting && <Loader2 size={18} className="animate-spin" />}
-          Se connecter
+          {isRegister ? 'Créer mon compte' : 'Se connecter'}
         </button>
 
         {/* Séparateur */}
@@ -145,11 +225,16 @@ export default function LoginForm() {
         {/* Google */}
         <button
           type="button"
-          disabled={isSubmitting}
+          onClick={handleGoogle}
+          disabled={busy}
           className="w-full flex items-center justify-center gap-3 bg-(--bg-2) text-(--t-1) font-semibold py-3.5 rounded-full border border-(--border-medium) hover:bg-(--bg-3) transition-colors active:scale-97 disabled:opacity-60 disabled:cursor-not-allowed"
           style={{ fontSize: 'var(--text-body-l)', transitionDuration: 'var(--duration-fast)' }}
         >
-          <img src={googleIcon} alt="" aria-hidden className="w-5 h-5" />
+          {googleLoading ? (
+            <Loader2 size={18} className="animate-spin" />
+          ) : (
+            <img src={googleIcon} alt="" aria-hidden className="w-5 h-5" />
+          )}
           Continuer avec Google
         </button>
       </form>
