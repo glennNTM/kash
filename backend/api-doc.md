@@ -53,13 +53,29 @@ const res = await fetch('http://localhost:8000/api/sections', {
 
 ## Mois — `/api/months`
 
-| Méthode | Chemin            | Description                                      |
-| ------- | ----------------- | ------------------------------------------------ |
-| GET     | `/api/months`     | Tous les mois de l'utilisateur (récents d'abord) |
-| GET     | `/api/months/:id` | Un mois                                          |
-| POST    | `/api/months`     | Créer un mois                                    |
-| PUT     | `/api/months/:id` | Mettre à jour                                    |
-| DELETE  | `/api/months/:id` | Supprimer (cascade)                              |
+| Méthode | Chemin                              | Description                                          |
+| ------- | ----------------------------------- | ---------------------------------------------------- |
+| GET     | `/api/months`                       | Tous les mois de l'utilisateur (récents d'abord)     |
+| GET     | `/api/months/by-date?year=&month=`  | **Mois + sections + dépenses imbriquées** (dashboard) |
+| GET     | `/api/months/:id`                   | Un mois                                              |
+| POST    | `/api/months`                       | Créer un mois                                        |
+| PUT     | `/api/months/:id`                   | Mettre à jour                                        |
+| DELETE  | `/api/months/:id`                   | Supprimer (cascade)                                  |
+
+**`GET /api/months/by-date`** — endpoint agrégé du dashboard. Query `year` + `month` requis.
+Renvoie le mois avec ses `sections` (triées) imbriquant chacune ses `expenses` (triées). **404** si aucun budget pour la période.
+
+```json
+{
+  "data": {
+    "id": 1, "month": 6, "year": 2026, "totalIncome": "2500.00",
+    "sections": [
+      { "id": 1, "name": "Charges", "type": "charges", "percentage": "0.5000",
+        "expenses": [ { "id": 1, "name": "Loyer", "amountPlanned": "150.00", "status": "paid", "paidAt": "2026-06-03T..." } ] }
+    ]
+  }
+}
+```
 
 **Corps (POST)** — `name`, `month`, `year` requis :
 
@@ -77,11 +93,19 @@ const res = await fetch('http://localhost:8000/api/sections', {
 
 | Méthode | Chemin                         | Description                      |
 | ------- | ------------------------------ | -------------------------------- |
-| GET     | `/api/sections/month/:monthId` | Sections d'un mois               |
-| GET     | `/api/sections/:id`            | Une section                      |
-| POST    | `/api/sections`                | Créer                            |
-| PUT     | `/api/sections/:id`            | Mettre à jour                    |
-| DELETE  | `/api/sections/:id`            | Supprimer (cascade sur dépenses) |
+| GET     | `/api/sections/month/:monthId`              | Sections d'un mois                       |
+| GET     | `/api/sections/:id`                         | Une section                              |
+| POST    | `/api/sections`                             | Créer                                    |
+| PUT     | `/api/sections/month/:monthId/percentages`  | **Répartition complète du mois** (bulk)  |
+| PUT     | `/api/sections/:id`                         | Mettre à jour                            |
+| DELETE  | `/api/sections/:id`                         | Supprimer (cascade sur dépenses)         |
+
+**`PUT /api/sections/month/:monthId/percentages`** — met à jour tous les % d'un mois en une transaction.
+Le corps doit couvrir **exactement** les sections du mois, chaque part ≥ 10 %, **somme = 100 %** (sinon 400).
+
+```json
+{ "percentages": [ { "id": 1, "percentage": 0.5 }, { "id": 2, "percentage": 0.3 }, { "id": 3, "percentage": 0.2 } ] }
+```
 
 **Corps (POST)** — `monthId`, `name`, `type`, `percentage` requis :
 

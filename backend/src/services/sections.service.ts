@@ -4,7 +4,7 @@ import { sections, months } from '../db/schema/index.js'
 import type { Section } from '../db/schema/index.js'
 import { assertMonthOwnership } from '../lib/ownership.js'
 import { BadRequestError, NotFoundError } from '../lib/errors.js'
-import type { CreateSectionInput, UpdateSectionInput } from '../validators/sections.schema.js'
+import type { CreateSectionInput, UpdateSectionInput, UpdatePercentagesInput } from '../validators/sections.schema.js'
 
 // Tolérance flottante pour la somme des pourcentages (évite de rejeter un 100% légitime).
 const EPSILON = 1e-9
@@ -94,6 +94,37 @@ export async function update(id: number, input: UpdateSectionInput, userId: stri
       .returning()
 
     return updated[0]!
+  })
+}
+
+// Met à jour la répartition complète d'un mois en une transaction.
+// Doit couvrir EXACTEMENT les sections du mois, et leur somme doit valoir 100%.
+export async function updatePercentages(
+  monthId: number,
+  userId: string,
+  items: UpdatePercentagesInput['percentages']
+): Promise<Section[]> {
+  await assertMonthOwnership(monthId, userId)
+
+  return db.transaction(async tx => {
+    const monthSections = await tx.select({ id: sections.id }).from(sections).where(eq(sections.monthId, monthId))
+    const monthIds = new Set(monthSections.map(s => s.id))
+
+    // Toutes les sections du mois doivent être fournies, et aucune section étrangère.
+    if (items.length !== monthIds.size || items.some(i => !monthIds.has(i.id))) {
+      throw new BadRequestError('La répartition doit couvrir exactement les sections du mois.')
+    }
+
+    const total = items.reduce((acc, i) => acc + i.percentage, 0)
+    if (Math.abs(total - 1) > EPSILON) {
+      throw new BadRequestError('La somme des pourcentages doit être égale à 100%.')
+    }
+
+    for (const item of items) {
+      await tx.update(sections).set({ percentage: String(item.percentage) }).where(eq(sections.id, item.id))
+    }
+
+    return tx.select().from(sections).where(eq(sections.monthId, monthId)).orderBy(sections.sortOrder)
   })
 }
 

@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import * as sectionsService from '../services/sections.service.js'
 import { parseId } from '../lib/params.js'
-import type { CreateSectionInput, UpdateSectionInput } from '../validators/sections.schema.js'
+import type { CreateSectionInput, UpdateSectionInput, UpdatePercentagesInput } from '../validators/sections.schema.js'
 
 /**
  * @route   GET /api/sections/month/:monthId
@@ -53,6 +53,19 @@ export async function update(req: Request, res: Response): Promise<void> {
   const userId = res.locals['userId'] as string
   const id = parseId(req.params['id'], 'ID de la section')
   const data = await sectionsService.update(id, req.body as UpdateSectionInput, userId)
+  res.status(200).json({ data })
+}
+
+/**
+ * @route   PUT /api/sections/month/:monthId/percentages
+ * @desc    Met à jour la répartition complète d'un mois (somme = 100%, en transaction)
+ * @access  Authentifié
+ */
+export async function updatePercentages(req: Request, res: Response): Promise<void> {
+  const userId = res.locals['userId'] as string
+  const monthId = parseId(req.params['monthId'], 'ID du mois')
+  const { percentages } = req.body as UpdatePercentagesInput
+  const data = await sectionsService.updatePercentages(monthId, userId, percentages)
   res.status(200).json({ data })
 }
 

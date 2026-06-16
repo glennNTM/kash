@@ -1,5 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getMonth, computeStats, addExpense, toggleRecurring, deleteExpense, updatePercentages, renameSection } from '../api/dashboard'
+import {
+  getMonth,
+  computeStats,
+  createMonthWithDefaults,
+  addExpense,
+  toggleRecurring,
+  deleteExpense,
+  updatePercentages,
+  renameSection,
+} from '../api/dashboard'
 import type { Expense } from '../types/budget'
 
 export function useDashboard(year: number, month: number) {
@@ -8,7 +17,19 @@ export function useDashboard(year: number, month: number) {
     queryFn: async () => {
       const res = await getMonth(year, month)
       if ('error' in res) throw new Error(res.error)
+      // null = aucun budget pour cette période (404) → pas une erreur, un état vide.
+      if (res.data === null) return { month: null, stats: null }
       return { month: res.data, stats: computeStats(res.data) }
+    },
+  })
+}
+
+export function useCreateMonth(year: number, month: number) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: () => createMonthWithDefaults(year, month),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['dashboard', year, month] })
     },
   })
 }
@@ -20,7 +41,7 @@ export function useAddExpense(year: number, month: number) {
       sectionId,
       expense,
     }: {
-      sectionId: string
+      sectionId: number
       expense: Omit<Expense, 'id' | 'sectionId'>
     }) => addExpense(sectionId, expense),
     onSuccess: () => {
@@ -32,7 +53,7 @@ export function useAddExpense(year: number, month: number) {
 export function useUpdatePercentages(year: number, month: number) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ monthId, percentages }: { monthId: string; percentages: Record<string, number> }) =>
+    mutationFn: ({ monthId, percentages }: { monthId: number; percentages: Record<string, number> }) =>
       updatePercentages(monthId, percentages),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['dashboard', year, month] })
@@ -43,7 +64,7 @@ export function useUpdatePercentages(year: number, month: number) {
 export function useRenameSection(year: number, month: number) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ sectionId, name }: { sectionId: string; name: string }) =>
+    mutationFn: ({ sectionId, name }: { sectionId: number; name: string }) =>
       renameSection(sectionId, name),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['dashboard', year, month] })
@@ -54,7 +75,7 @@ export function useRenameSection(year: number, month: number) {
 export function useDeleteExpense(year: number, month: number) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (expenseId: string) => deleteExpense(expenseId),
+    mutationFn: (expenseId: number) => deleteExpense(expenseId),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['dashboard', year, month] })
     },
@@ -64,7 +85,8 @@ export function useDeleteExpense(year: number, month: number) {
 export function useToggleRecurring(year: number, month: number) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (expenseId: string) => toggleRecurring(expenseId),
+    mutationFn: ({ expenseId, isRecurring }: { expenseId: number; isRecurring: boolean }) =>
+      toggleRecurring(expenseId, isRecurring),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['dashboard', year, month] })
     },

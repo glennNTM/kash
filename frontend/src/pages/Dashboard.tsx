@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import MonthSelector from '../components/dashboard/MonthSelector'
 import HeroCard from '../components/dashboard/HeroCard'
 import SectionGrid from '../components/dashboard/SectionGrid'
@@ -9,7 +10,9 @@ import StatsPreviewCard from '../components/dashboard/StatsPreviewCard'
 import RecentExpensesTable from '../components/dashboard/RecentExpensesTable'
 import DashboardSkeleton from '../components/dashboard/DashboardSkeleton'
 import ErrorState from '../components/ui/ErrorState'
-import { useDashboard } from '../hooks/useDashboard'
+import EmptyState from '../components/ui/EmptyState'
+import { Wallet } from '../lib/icons'
+import { useDashboard, useCreateMonth } from '../hooks/useDashboard'
 import type { Section } from '../types/budget'
 
 export default function Dashboard() {
@@ -24,6 +27,10 @@ export default function Dashboard() {
   const [renameModalOpen, setRenameModalOpen]   = useState(false)
 
   const { data, isLoading, isError, refetch, isFetching } = useDashboard(year, month)
+  const createMonth = useCreateMonth(year, month)
+
+  const monthData = data?.month ?? null
+  const stats = data?.stats ?? null
 
   function openSection(section: Section) {
     setActiveSection(section)
@@ -33,6 +40,12 @@ export default function Dashboard() {
   function openRename(section: Section) {
     setRenameSection(section)
     setRenameModalOpen(true)
+  }
+
+  async function handleCreateMonth() {
+    const res = await createMonth.mutateAsync()
+    if ('error' in res) toast.error(res.error)
+    else toast.success('Budget créé pour ce mois')
   }
 
   return (
@@ -58,21 +71,33 @@ export default function Dashboard() {
       {isError && (
         <ErrorState onRetry={() => refetch()} retrying={isFetching} />
       )}
-      {data && (
+
+      {/* Aucun budget pour cette période (404) → invitation à le créer */}
+      {data && monthData === null && (
+        <EmptyState
+          icon={Wallet}
+          title="Pas encore de budget pour cette période"
+          description="Crée ton budget du mois avec la répartition 50/30/20, puis ajuste-le comme tu veux."
+          action={{ label: '+ Créer mon budget', onClick: handleCreateMonth }}
+        />
+      )}
+
+      {/* Hero + Stats preview côte à côte */}
+      {monthData && stats && (
         <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-4 items-stretch">
-          <HeroCard stats={data.stats} />
+          <HeroCard stats={stats} />
           <StatsPreviewCard
-            stats={data.stats}
-            sections={data.month.sections.map((s) => ({ name: s.name, percentage: s.percentage }))}
+            stats={stats}
+            sections={monthData.sections.map((s) => ({ name: s.name, percentage: s.percentage }))}
           />
         </div>
       )}
 
       {/* Sections */}
-      {data && (
+      {monthData && stats && (
         <SectionGrid
-          sections={data.month.sections}
-          stats={data.stats.sections}
+          sections={monthData.sections}
+          stats={stats.sections}
           onSectionClick={openSection}
           onAddSection={() => {}}
           onAdjustPercentages={() => setAdjustModalOpen(true)}
@@ -80,12 +105,12 @@ export default function Dashboard() {
       )}
 
       {/* Dernières dépenses — pleine largeur */}
-      {data && <RecentExpensesTable expenses={data.stats.recentExpenses} />}
+      {stats && <RecentExpensesTable expenses={stats.recentExpenses} />}
 
       {/* Modales */}
       <SectionDetailModal
         section={activeSection}
-        stats={data?.stats.sections.find((s) => s.sectionId === activeSection?.id) ?? null}
+        stats={stats?.sections.find((s) => s.sectionId === activeSection?.id) ?? null}
         year={year}
         month={month}
         open={sectionModalOpen}
@@ -93,11 +118,11 @@ export default function Dashboard() {
         onRename={openRename}
       />
 
-      {data && (
+      {monthData && (
         <AdjustPercentagesModal
           key={adjustModalOpen ? 'adjust-open' : 'adjust-closed'}
-          monthId={data.month.id}
-          sections={data.month.sections}
+          monthId={monthData.id}
+          sections={monthData.sections}
           year={year}
           month={month}
           open={adjustModalOpen}
