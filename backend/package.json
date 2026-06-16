@@ -14,7 +14,17 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up --build",
+    "docker:dev:down": "docker compose -f docker-compose.dev.yml down -v",
+    "docker:prod": "docker compose -f docker-compose.prod.yml up --build -d",
+    "docker:prod:down": "docker compose -f docker-compose.prod.yml down",
+    "docker:logs:dev": "docker compose -f docker-compose.dev.yml logs -f app",
+    "docker:logs:prod": "docker compose -f docker-compose.prod.yml logs -f app"
   },
   "dependencies": {
     "@arcjet/inspect": "^1.5.0",
@@ -33,6 +43,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
@@ -41,7 +52,11 @@
     "@types/swagger-ui-express": "^4.1.8",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
+    "eslint": "^10.5.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.4",
     "tsx": "^4.22.4",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1"
   }
 }

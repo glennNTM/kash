@@ -1,4 +1,4 @@
-import { pgTable, text, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, boolean, timestamp } from 'drizzle-orm/pg-core'
 
 /**
  * Tables gérées par Better Auth (adaptateur Drizzle).
@@ -17,7 +17,7 @@ export const users = pgTable('users', {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
-});
+})
 
 export const sessions = pgTable('sessions', {
   id: text('id').primaryKey(),
@@ -33,7 +33,7 @@ export const sessions = pgTable('sessions', {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
-});
+})
 
 export const accounts = pgTable('accounts', {
   id: text('id').primaryKey(),
@@ -54,7 +54,7 @@ export const accounts = pgTable('accounts', {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
-});
+})
 
 export const verifications = pgTable('verifications', {
   id: text('id').primaryKey(),
@@ -65,4 +65,4 @@ export const verifications = pgTable('verifications', {
   updatedAt: timestamp('updated_at', { withTimezone: true })
     .defaultNow()
     .$onUpdate(() => new Date()),
-});
+})

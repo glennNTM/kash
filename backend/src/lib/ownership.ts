@@ -9,11 +9,7 @@ import { NotFoundError } from './errors.js'
  * pour ne pas divulguer l'existence des ressources d'autrui.
  */
 export async function assertMonthOwnership(monthId: number, userId: string): Promise<void> {
-  const result = await db
-    .select({ userId: months.userId })
-    .from(months)
-    .where(eq(months.id, monthId))
-    .limit(1)
+  const result = await db.select({ userId: months.userId }).from(months).where(eq(months.id, monthId)).limit(1)
 
   const month = result[0]
   if (!month || month.userId !== userId) {
@@ -44,11 +40,7 @@ export async function assertSectionOwnership(sectionId: number, userId: string):
  * Même politique : 404 si inexistant ou possédé par un autre.
  */
 export async function assertGoalOwnership(goalId: number, userId: string): Promise<void> {
-  const result = await db
-    .select({ userId: goals.userId })
-    .from(goals)
-    .where(eq(goals.id, goalId))
-    .limit(1)
+  const result = await db.select({ userId: goals.userId }).from(goals).where(eq(goals.id, goalId)).limit(1)
 
   const row = result[0]
   if (!row || row.userId !== userId) {

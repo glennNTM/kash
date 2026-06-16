@@ -50,11 +50,7 @@ export async function create(input: CreateExpenseInput, userId: string): Promise
 
 // Met à jour une dépense possédée par l'utilisateur.
 // Un changement de statut synchronise paidAt (now si 'paid', null si 'planned').
-export async function update(
-  id: number,
-  input: UpdateExpenseInput,
-  userId: string,
-): Promise<Expense> {
+export async function update(id: number, input: UpdateExpenseInput, userId: string): Promise<Expense> {
   const found = await db
     .select({ id: expenses.id })
     .from(expenses)

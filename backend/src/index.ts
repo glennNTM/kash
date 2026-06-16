@@ -20,7 +20,7 @@ app.use(
     origin: [env.FRONTEND_URL, `http://localhost:${DOCS_PORT}`],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
-  }),
+  })
 )
 
 // Le handler Better Auth doit être monté AVANT express.json() :

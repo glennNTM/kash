@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kash-db-dev
+    environment:
+      POSTGRES_USER: kash
+      POSTGRES_PASSWORD: kash_dev_password
+      POSTGRES_DB: kash_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - kash_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kash -d kash_dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      target: development
+    container_name: kash-app-dev
+    ports:
+      - "8000:8000"
+    environment:
+      NODE_ENV: development
+      PORT: 8000
+      DATABASE_URL: postgres://kash:kash_dev_password@db:5432/kash_dev
+      DIRECT_URL: postgres://kash:kash_dev_password@db:5432/kash_dev
+      BETTER_AUTH_SECRET: dev-secret-change-me-in-production
+      BETTER_AUTH_URL: http://localhost:8000
+      FRONTEND_URL: http://localhost:5173
+      ARCJET_KEY: ${ARCJET_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    volumes:
+      - ./src:/app/src
+      - ./drizzle:/app/drizzle
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  kash_pgdata:

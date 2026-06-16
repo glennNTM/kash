@@ -55,11 +55,7 @@ export async function create(req: Request, res: Response): Promise<void> {
 export async function update(req: Request, res: Response): Promise<void> {
   const userId = res.locals['userId'] as string
   const id = parseId(req.params['id'], 'ID de la contribution')
-  const data = await goalContributionsService.update(
-    id,
-    req.body as UpdateGoalContributionInput,
-    userId,
-  )
+  const data = await goalContributionsService.update(id, req.body as UpdateGoalContributionInput, userId)
   res.status(200).json({ data })
 }
 

@@ -7,11 +7,7 @@ import type { CreateMonthInput, UpdateMonthInput } from '../validators/months.sc
 
 // Récupère tous les mois de l'utilisateur connecté, du plus récent au plus ancien.
 export async function findAll(userId: string): Promise<Month[]> {
-  return db
-    .select()
-    .from(months)
-    .where(eq(months.userId, userId))
-    .orderBy(desc(months.year), desc(months.month))
+  return db.select().from(months).where(eq(months.userId, userId)).orderBy(desc(months.year), desc(months.month))
 }
 
 // Récupère un mois de l'utilisateur par son ID.

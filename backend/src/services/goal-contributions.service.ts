@@ -28,10 +28,7 @@ export async function findById(id: number, userId: string): Promise<GoalContribu
 
 // Crée une contribution. L'objectif ET le mois doivent appartenir à l'utilisateur.
 // La contrainte unique (goalId, monthId) → 409 via l'error handler.
-export async function create(
-  input: CreateGoalContributionInput,
-  userId: string,
-): Promise<GoalContribution> {
+export async function create(input: CreateGoalContributionInput, userId: string): Promise<GoalContribution> {
   await assertGoalOwnership(input.goalId, userId)
   await assertMonthOwnership(input.monthId, userId)
 
@@ -51,7 +48,7 @@ export async function create(
 export async function update(
   id: number,
   input: UpdateGoalContributionInput,
-  userId: string,
+  userId: string
 ): Promise<GoalContribution> {
   const found = await db
     .select({ id: goalContributions.id })

@@ -30,7 +30,7 @@ export async function findById(id: number, userId: string): Promise<Section | nu
 export async function create(input: CreateSectionInput, userId: string): Promise<Section> {
   await assertMonthOwnership(input.monthId, userId)
 
-  return db.transaction(async (tx) => {
+  return db.transaction(async tx => {
     const existing = await tx
       .select({ total: sum(sections.percentage) })
       .from(sections)
@@ -57,12 +57,8 @@ export async function create(input: CreateSectionInput, userId: string): Promise
 }
 
 // Met à jour une section possédée par l'utilisateur. Revalide la somme des % si elle change.
-export async function update(
-  id: number,
-  input: UpdateSectionInput,
-  userId: string,
-): Promise<Section> {
-  return db.transaction(async (tx) => {
+export async function update(id: number, input: UpdateSectionInput, userId: string): Promise<Section> {
+  return db.transaction(async tx => {
     const found = await tx
       .select({ section: sections })
       .from(sections)

@@ -16,7 +16,7 @@ const securityMiddleware = (limit: number, interval: string = '1m') => {
       mode: 'LIVE',
       interval,
       max: limit,
-    }),
+    })
   )
 
   return async (req: Request, res: Response, next: NextFunction) => {

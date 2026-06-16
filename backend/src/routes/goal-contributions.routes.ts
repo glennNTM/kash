@@ -1,17 +1,8 @@
 import { Router } from 'express'
 import { requireAuth } from '../middlewares/auth.middleware.js'
 import { validate } from '../middlewares/validate.middleware.js'
-import {
-  createGoalContributionSchema,
-  updateGoalContributionSchema,
-} from '../validators/goal-contributions.schema.js'
-import {
-  getByGoal,
-  getById,
-  create,
-  update,
-  remove,
-} from '../controllers/goal-contributions.controller.js'
+import { createGoalContributionSchema, updateGoalContributionSchema } from '../validators/goal-contributions.schema.js'
+import { getByGoal, getById, create, update, remove } from '../controllers/goal-contributions.controller.js'
 
 const goalContributionsRouter: ReturnType<typeof Router> = Router()
 

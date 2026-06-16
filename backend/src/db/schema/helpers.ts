@@ -1,4 +1,4 @@
-import { timestamp } from 'drizzle-orm/pg-core';
+import { timestamp } from 'drizzle-orm/pg-core'
 
 /**
  * Colonnes timestamp partagées par toutes les tables métier.
@@ -10,4 +10,4 @@ export const timestamps = {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
-};
+}
