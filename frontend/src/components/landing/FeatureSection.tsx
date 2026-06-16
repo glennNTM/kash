@@ -61,42 +61,61 @@ export default function FeatureSection() {
         {/* Cartes */}
         <div className="grid md:grid-cols-3 gap-6">
           {features.map(({ icon: Icon, percentage, title, description }) => (
-            <div
-              key={title}
-              className="group bg-(--bg-2) rounded-2xl border border-(--border-subtle) p-7 text-center flex flex-col items-center transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-lg"
-              style={{
-                boxShadow: 'var(--shadow-sm)',
-                transitionTimingFunction: 'var(--ease-apple)',
-              }}
-            >
-              <div className="w-14 h-14 rounded-2xl bg-(--accent-soft) flex items-center justify-center">
-                <Icon size={26} className="text-(--accent)" strokeWidth={1.75} />
-              </div>
-
-              <span
-                className="font-display font-bold text-(--accent) mt-4 leading-none"
-                style={{ fontSize: 'var(--text-heading-l)' }}
-              >
-                {percentage}
-              </span>
-
-              <h3
-                className="font-semibold text-(--t-1) mt-2"
-                style={{ fontSize: 'var(--text-heading-s)', fontFamily: 'var(--font-body)' }}
-              >
-                {title}
-              </h3>
-
-              {/* Description — visible sur mobile, révélée au survol sur desktop */}
-              <p
-                className="text-(--t-2) overflow-hidden mt-3 md:mt-0 md:max-h-0 md:opacity-0 md:group-hover:mt-3 md:group-hover:max-h-40 md:group-hover:opacity-100 transition-[max-height,opacity,margin] duration-300"
+            <div key={title} className="group h-[300px] [perspective:1200px]">
+              {/* Conteneur flip */}
+              <div
+                className="relative w-full h-full [transform-style:preserve-3d] transition-[transform] group-hover:[transform:rotateY(180deg)]"
                 style={{
-                  fontSize: 'var(--text-body)',
-                  transitionTimingFunction: 'var(--ease-apple)',
+                  transitionDuration: '650ms',
+                  transitionTimingFunction: 'var(--ease-smooth)',
                 }}
               >
-                {description}
-              </p>
+                {/* Face avant — icon + pourcentage + titre + description */}
+                <div
+                  className="absolute inset-0 [backface-visibility:hidden] bg-(--bg-2) rounded-2xl border border-(--border-subtle) p-7 flex flex-col items-center justify-center text-center"
+                  style={{ boxShadow: 'var(--shadow-sm)' }}
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-(--accent-soft) flex items-center justify-center shrink-0">
+                    <Icon size={26} className="text-(--accent)" strokeWidth={1.75} />
+                  </div>
+                  <span
+                    className="font-display font-bold text-(--accent) mt-4 leading-none"
+                    style={{ fontSize: 'var(--text-heading-l)' }}
+                  >
+                    {percentage}
+                  </span>
+                  <h3
+                    className="font-semibold text-(--t-1) mt-2"
+                    style={{ fontSize: 'var(--text-heading-s)', fontFamily: 'var(--font-body)' }}
+                  >
+                    {title}
+                  </h3>
+                  <p
+                    className="text-(--t-2) mt-3 line-clamp-3"
+                    style={{ fontSize: 'var(--text-body)' }}
+                  >
+                    {description}
+                  </p>
+                </div>
+
+                {/* Face arrière — titre + description mise en avant */}
+                <div
+                  className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white/20 border border-white/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-5"
+                >
+                  <h3
+                    className="font-semibold text-white"
+                    style={{ fontSize: 'var(--text-heading-s)', fontFamily: 'var(--font-body)' }}
+                  >
+                    {title}
+                  </h3>
+                  <p
+                    className="text-white/90"
+                    style={{ fontSize: 'var(--text-body-l)', lineHeight: '1.65' }}
+                  >
+                    {description}
+                  </p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
