@@ -42,6 +42,9 @@ export {
   Eye,
   EyeOff,
   Loader2,
+  RotateCw,
+  CloudOff,
+  TriangleAlert,
 
   // Sections budgétaires (50/30/20)
   Wallet,

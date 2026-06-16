@@ -7,6 +7,8 @@ import AdjustPercentagesModal from '../components/dashboard/AdjustPercentagesMod
 import RenameSectionModal from '../components/dashboard/RenameSectionModal'
 import StatsPreviewCard from '../components/dashboard/StatsPreviewCard'
 import RecentExpensesTable from '../components/dashboard/RecentExpensesTable'
+import DashboardSkeleton from '../components/dashboard/DashboardSkeleton'
+import ErrorState from '../components/ui/ErrorState'
 import { useDashboard } from '../hooks/useDashboard'
 import type { Section } from '../types/budget'
 
@@ -21,7 +23,7 @@ export default function Dashboard() {
   const [renameSection, setRenameSection]       = useState<Section | null>(null)
   const [renameModalOpen, setRenameModalOpen]   = useState(false)
 
-  const { data, isLoading, isError } = useDashboard(year, month)
+  const { data, isLoading, isError, refetch, isFetching } = useDashboard(year, month)
 
   function openSection(section: Section) {
     setActiveSection(section)
@@ -50,17 +52,11 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Hero + Stats preview côte à côte */}
-      {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-4">
-          <div className="rounded-xl bg-(--bg-3) animate-pulse h-40" />
-          <div className="rounded-xl bg-(--bg-3) animate-pulse h-40" />
-        </div>
-      )}
+      {/* Chargement : squelette « formé » de toute la page */}
+      {isLoading && <DashboardSkeleton />}
+
       {isError && (
-        <div className="rounded-xl bg-(--bg-2) border border-(--border-medium) p-6 text-center text-(--t-2) text-sm">
-          Impossible de charger les données. Réessaie plus tard.
-        </div>
+        <ErrorState onRetry={() => refetch()} retrying={isFetching} />
       )}
       {data && (
         <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-4 items-stretch">
@@ -73,13 +69,6 @@ export default function Dashboard() {
       )}
 
       {/* Sections */}
-      {isLoading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-xl bg-(--bg-3) animate-pulse h-36" />
-          ))}
-        </div>
-      )}
       {data && (
         <SectionGrid
           sections={data.month.sections}
@@ -91,7 +80,6 @@ export default function Dashboard() {
       )}
 
       {/* Dernières dépenses — pleine largeur */}
-      {isLoading && <div className="rounded-xl bg-(--bg-3) animate-pulse h-48" />}
       {data && <RecentExpensesTable expenses={data.stats.recentExpenses} />}
 
       {/* Modales */}

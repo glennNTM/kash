@@ -1,4 +1,5 @@
 import { formatAmount } from '../../lib/format'
+import { Wallet } from '../../lib/icons'
 import type { DashboardStats } from '../../types/budget'
 
 interface RecentExpensesTableProps {
@@ -8,9 +9,19 @@ interface RecentExpensesTableProps {
 export default function RecentExpensesTable({ expenses }: RecentExpensesTableProps) {
   if (expenses.length === 0) {
     return (
-      <div className="rounded-xl border border-(--border-subtle) bg-(--bg-2) p-6 text-center text-sm text-(--t-3)"
-        style={{ boxShadow: 'var(--shadow-sm)' }}>
-        Aucune dépense payée ce mois-ci.
+      <div
+        className="rounded-xl border border-(--border-subtle) bg-(--bg-2) px-6 py-10 flex flex-col items-center text-center"
+        style={{ boxShadow: 'var(--shadow-sm)' }}
+      >
+        <span className="grid place-items-center size-12 rounded-full bg-(--accent-soft) mb-4">
+          <Wallet size={22} strokeWidth={1.5} className="text-(--accent)" />
+        </span>
+        <p className="font-semibold text-(--t-1) mb-1" style={{ fontSize: 'var(--text-body-l)' }}>
+          Rien de dépensé pour l'instant
+        </p>
+        <p className="text-sm text-(--t-3) max-w-xs">
+          Chaque dépense que tu notes, c'est un pas de plus vers le contrôle de ton budget.
+        </p>
       </div>
     )
   }
