@@ -8,7 +8,13 @@ export const createGoalContributionSchema = z.object({
 })
 
 // Le rattachement (goal + month) est immuable ; seuls le nom et le montant changent.
-export const updateGoalContributionSchema = createGoalContributionSchema.omit({ goalId: true, monthId: true }).partial()
+export const updateGoalContributionSchema = createGoalContributionSchema
+  .omit({ goalId: true, monthId: true })
+  .partial()
 
-export type CreateGoalContributionInput = z.infer<typeof createGoalContributionSchema>
-export type UpdateGoalContributionInput = z.infer<typeof updateGoalContributionSchema>
+export type CreateGoalContributionInput = z.infer<
+  typeof createGoalContributionSchema
+>
+export type UpdateGoalContributionInput = z.infer<
+  typeof updateGoalContributionSchema
+>

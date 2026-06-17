@@ -1,7 +1,12 @@
 import { z } from 'zod'
 
 // Types de section alignés sur l'enum Drizzle (db/schema/app.ts).
-export const sectionTypeEnum = z.enum(['charges', 'epargne', 'loisirs', 'custom'])
+export const sectionTypeEnum = z.enum([
+  'charges',
+  'epargne',
+  'loisirs',
+  'custom',
+])
 
 export const createSectionSchema = z.object({
   monthId: z.number().int().positive(),
@@ -16,7 +21,9 @@ export const createSectionSchema = z.object({
 })
 
 // En mise à jour, tout est optionnel sauf le rattachement au mois (immuable).
-export const updateSectionSchema = createSectionSchema.omit({ monthId: true }).partial()
+export const updateSectionSchema = createSectionSchema
+  .omit({ monthId: true })
+  .partial()
 
 // Mise à jour groupée des % d'un mois. La somme = 100% est validée côté service (transaction).
 export const updatePercentagesSchema = z.object({

@@ -20,7 +20,6 @@ const googleProvider =
     : undefined
 
 export const auth = betterAuth({
-  
   baseURL: env.BETTER_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
   // Autorise le front (cross-origin) à initier les requêtes d'auth.
@@ -31,7 +30,7 @@ export const auth = betterAuth({
     usePlural: true,
     schema,
   }),
-  
+
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,

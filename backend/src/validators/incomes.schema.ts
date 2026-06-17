@@ -8,7 +8,9 @@ export const createIncomeSchema = z.object({
 })
 
 // En mise à jour, tout est optionnel sauf le rattachement au mois (immuable).
-export const updateIncomeSchema = createIncomeSchema.omit({ monthId: true }).partial()
+export const updateIncomeSchema = createIncomeSchema
+  .omit({ monthId: true })
+  .partial()
 
 export type CreateIncomeInput = z.infer<typeof createIncomeSchema>
 export type UpdateIncomeInput = z.infer<typeof updateIncomeSchema>

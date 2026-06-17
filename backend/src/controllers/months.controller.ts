@@ -2,7 +2,10 @@ import type { Request, Response } from 'express'
 import * as monthsService from '../services/months.service.js'
 import { parseId } from '../lib/params.js'
 import { monthByDateQuerySchema } from '../validators/months.schema.js'
-import type { CreateMonthInput, UpdateMonthInput } from '../validators/months.schema.js'
+import type {
+  CreateMonthInput,
+  UpdateMonthInput,
+} from '../validators/months.schema.js'
 
 /**
  * @route   GET /api/months
@@ -72,7 +75,11 @@ export async function create(req: Request, res: Response): Promise<void> {
 export async function update(req: Request, res: Response): Promise<void> {
   const userId = res.locals['userId'] as string
   const id = parseId(req.params['id'], 'ID du mois')
-  const data = await monthsService.update(id, req.body as UpdateMonthInput, userId)
+  const data = await monthsService.update(
+    id,
+    req.body as UpdateMonthInput,
+    userId
+  )
   res.status(200).json({ data })
 }
 

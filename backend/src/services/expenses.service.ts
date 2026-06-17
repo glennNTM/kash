@@ -4,16 +4,29 @@ import { expenses, sections, months } from '../db/schema/index.js'
 import type { Expense } from '../db/schema/index.js'
 import { assertSectionOwnership } from '../lib/ownership.js'
 import { NotFoundError } from '../lib/errors.js'
-import type { CreateExpenseInput, UpdateExpenseInput } from '../validators/expenses.schema.js'
+import type {
+  CreateExpenseInput,
+  UpdateExpenseInput,
+} from '../validators/expenses.schema.js'
 
 // Récupère les dépenses d'une section appartenant à l'utilisateur, ordonnées.
-export async function findBySection(sectionId: number, userId: string): Promise<Expense[]> {
+export async function findBySection(
+  sectionId: number,
+  userId: string
+): Promise<Expense[]> {
   await assertSectionOwnership(sectionId, userId)
-  return db.select().from(expenses).where(eq(expenses.sectionId, sectionId)).orderBy(expenses.sortOrder)
+  return db
+    .select()
+    .from(expenses)
+    .where(eq(expenses.sectionId, sectionId))
+    .orderBy(expenses.sortOrder)
 }
 
 // Récupère une dépense par son ID, en vérifiant l'appartenance via section → mois.
-export async function findById(id: number, userId: string): Promise<Expense | null> {
+export async function findById(
+  id: number,
+  userId: string
+): Promise<Expense | null> {
   const result = await db
     .select({ expense: expenses })
     .from(expenses)
@@ -26,7 +39,10 @@ export async function findById(id: number, userId: string): Promise<Expense | nu
 
 // Crée une dépense dans une section possédée par l'utilisateur.
 // paidAt est posé automatiquement quand le statut est 'paid'.
-export async function create(input: CreateExpenseInput, userId: string): Promise<Expense> {
+export async function create(
+  input: CreateExpenseInput,
+  userId: string
+): Promise<Expense> {
   await assertSectionOwnership(input.sectionId, userId)
 
   const status = input.status ?? 'planned'
@@ -39,9 +55,13 @@ export async function create(input: CreateExpenseInput, userId: string): Promise
       amountPlanned: String(input.amountPlanned),
       status,
       ...(input.category !== undefined && { category: input.category }),
-      ...(input.amountReal !== undefined && { amountReal: String(input.amountReal) }),
+      ...(input.amountReal !== undefined && {
+        amountReal: String(input.amountReal),
+      }),
       ...(status === 'paid' && { paidAt: new Date() }),
-      ...(input.isRecurring !== undefined && { isRecurring: input.isRecurring }),
+      ...(input.isRecurring !== undefined && {
+        isRecurring: input.isRecurring,
+      }),
       ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
     })
     .returning()
@@ -50,7 +70,11 @@ export async function create(input: CreateExpenseInput, userId: string): Promise
 
 // Met à jour une dépense possédée par l'utilisateur.
 // Un changement de statut synchronise paidAt (now si 'paid', null si 'planned').
-export async function update(id: number, input: UpdateExpenseInput, userId: string): Promise<Expense> {
+export async function update(
+  id: number,
+  input: UpdateExpenseInput,
+  userId: string
+): Promise<Expense> {
   const found = await db
     .select({ id: expenses.id })
     .from(expenses)
@@ -66,9 +90,15 @@ export async function update(id: number, input: UpdateExpenseInput, userId: stri
     .set({
       ...(input.name !== undefined && { name: input.name }),
       ...(input.category !== undefined && { category: input.category }),
-      ...(input.amountPlanned !== undefined && { amountPlanned: String(input.amountPlanned) }),
-      ...(input.amountReal !== undefined && { amountReal: String(input.amountReal) }),
-      ...(input.isRecurring !== undefined && { isRecurring: input.isRecurring }),
+      ...(input.amountPlanned !== undefined && {
+        amountPlanned: String(input.amountPlanned),
+      }),
+      ...(input.amountReal !== undefined && {
+        amountReal: String(input.amountReal),
+      }),
+      ...(input.isRecurring !== undefined && {
+        isRecurring: input.isRecurring,
+      }),
       ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
       ...(input.status !== undefined && {
         status: input.status,

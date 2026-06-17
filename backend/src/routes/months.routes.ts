@@ -1,8 +1,18 @@
 import { Router } from 'express'
 import { requireAuth } from '../middlewares/auth.middleware.js'
 import { validate } from '../middlewares/validate.middleware.js'
-import { createMonthSchema, updateMonthSchema } from '../validators/months.schema.js'
-import { getAll, getByDate, getById, create, update, remove } from '../controllers/months.controller.js'
+import {
+  createMonthSchema,
+  updateMonthSchema,
+} from '../validators/months.schema.js'
+import {
+  getAll,
+  getByDate,
+  getById,
+  create,
+  update,
+  remove,
+} from '../controllers/months.controller.js'
 
 const monthsRouter: ReturnType<typeof Router> = Router()
 

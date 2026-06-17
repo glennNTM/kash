@@ -4,16 +4,25 @@ import { incomes, months } from '../db/schema/index.js'
 import type { Income } from '../db/schema/index.js'
 import { assertMonthOwnership } from '../lib/ownership.js'
 import { NotFoundError } from '../lib/errors.js'
-import type { CreateIncomeInput, UpdateIncomeInput } from '../validators/incomes.schema.js'
+import type {
+  CreateIncomeInput,
+  UpdateIncomeInput,
+} from '../validators/incomes.schema.js'
 
 // Récupère les revenus d'un mois appartenant à l'utilisateur.
-export async function findByMonth(monthId: number, userId: string): Promise<Income[]> {
+export async function findByMonth(
+  monthId: number,
+  userId: string
+): Promise<Income[]> {
   await assertMonthOwnership(monthId, userId)
   return db.select().from(incomes).where(eq(incomes.monthId, monthId))
 }
 
 // Récupère un revenu par son ID, en vérifiant l'appartenance via le mois.
-export async function findById(id: number, userId: string): Promise<Income | null> {
+export async function findById(
+  id: number,
+  userId: string
+): Promise<Income | null> {
   const result = await db
     .select({ income: incomes })
     .from(incomes)
@@ -24,7 +33,10 @@ export async function findById(id: number, userId: string): Promise<Income | nul
 }
 
 // Crée un revenu rattaché à un mois possédé par l'utilisateur.
-export async function create(input: CreateIncomeInput, userId: string): Promise<Income> {
+export async function create(
+  input: CreateIncomeInput,
+  userId: string
+): Promise<Income> {
   await assertMonthOwnership(input.monthId, userId)
 
   const inserted = await db
@@ -40,7 +52,11 @@ export async function create(input: CreateIncomeInput, userId: string): Promise<
 }
 
 // Met à jour un revenu possédé par l'utilisateur.
-export async function update(id: number, input: UpdateIncomeInput, userId: string): Promise<Income> {
+export async function update(
+  id: number,
+  input: UpdateIncomeInput,
+  userId: string
+): Promise<Income> {
   const found = await db
     .select({ id: incomes.id })
     .from(incomes)

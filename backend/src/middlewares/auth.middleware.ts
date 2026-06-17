@@ -6,7 +6,11 @@ import { auth } from '../lib/auth.js'
  * Vérifie la session Better Auth et expose l'utilisateur aux controllers
  * via res.locals (userId / user). Répond 401 si aucune session valide.
  */
-export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function requireAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),

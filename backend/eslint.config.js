@@ -4,7 +4,13 @@ import prettier from 'eslint-config-prettier'
 
 export default tseslint.config(
   {
-    ignores: ['node_modules/**', 'coverage/**', 'logs/**', 'drizzle/**', 'dist/**'],
+    ignores: [
+      'node_modules/**',
+      'coverage/**',
+      'logs/**',
+      'drizzle/**',
+      'dist/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -25,7 +31,10 @@ export default tseslint.config(
     },
     rules: {
       // qualité de code uniquement — le format est géré par Prettier
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
       'no-console': 'off',
       'prefer-const': 'error',
       'no-var': 'error',

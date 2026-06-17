@@ -1,7 +1,10 @@
 import type { Request, Response } from 'express'
 import * as expensesService from '../services/expenses.service.js'
 import { parseId } from '../lib/params.js'
-import type { CreateExpenseInput, UpdateExpenseInput } from '../validators/expenses.schema.js'
+import type {
+  CreateExpenseInput,
+  UpdateExpenseInput,
+} from '../validators/expenses.schema.js'
 
 /**
  * @route   GET /api/expenses/section/:sectionId
@@ -40,7 +43,10 @@ export async function getById(req: Request, res: Response): Promise<void> {
  */
 export async function create(req: Request, res: Response): Promise<void> {
   const userId = res.locals['userId'] as string
-  const data = await expensesService.create(req.body as CreateExpenseInput, userId)
+  const data = await expensesService.create(
+    req.body as CreateExpenseInput,
+    userId
+  )
   res.status(201).json({ data })
 }
 
@@ -52,7 +58,11 @@ export async function create(req: Request, res: Response): Promise<void> {
 export async function update(req: Request, res: Response): Promise<void> {
   const userId = res.locals['userId'] as string
   const id = parseId(req.params['id'], 'ID de la dépense')
-  const data = await expensesService.update(id, req.body as UpdateExpenseInput, userId)
+  const data = await expensesService.update(
+    id,
+    req.body as UpdateExpenseInput,
+    userId
+  )
   res.status(200).json({ data })
 }
 
