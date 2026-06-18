@@ -5,9 +5,11 @@ import sectionsRouter from './sections.routes.js'
 import expensesRouter from './expenses.routes.js'
 import goalsRouter from './goals.routes.js'
 import goalContributionsRouter from './goal-contributions.routes.js'
+import onboardingRouter from './onboarding.routes.js'
 
 const router: ReturnType<typeof Router> = Router()
 
+router.use('/onboarding', onboardingRouter)
 router.use('/months', monthsRouter)
 router.use('/incomes', incomesRouter)
 router.use('/sections', sectionsRouter)

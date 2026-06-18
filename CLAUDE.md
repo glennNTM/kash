@@ -21,6 +21,30 @@ Un ebook « méthode 50/30/20 » est vendu sur Chariow (plateforme externe). La 
 
 ---
 
+## État d'avancement (au 18 juin 2026)
+
+> Section vivante : reflète ce qui est réellement en place dans le repo, pas la cible.
+
+**Backend — quasi complet**
+- Base migrée de Supabase vers **Neon** (Postgres serverless). Driver `postgres-js`, `{ prepare: false }`.
+- Schéma Drizzle complet pour les 6 ressources + tables Better Auth. 1 migration appliquée (`drizzle/0000_loving_wolf_cub.sql`).
+- CRUD complet en couches (`controllers / services / routes / validators zod / docs swagger`) pour months, incomes, sections, expenses, goals, goal-contributions.
+- Auth **Better Auth** (credentials + Google OAuth, sessions), middlewares `auth / validate / error`, vérif d'ownership.
+- Sécurité **Arcjet** branchée (rate limit + bots) ; doc Swagger exposée.
+
+**Frontend — en cours**
+- Landing + Login en place. `DashboardLayout` + sidebar (collapse via Zustand).
+- **Dashboard câblé à l'API** : `lib/api-client.ts`, `api/dashboard.ts`, `api/mappers.ts`, `lib/errors.ts`, + états UI (`Skeleton`, `ErrorState`, `EmptyState`, `ErrorBoundary`, `ConfirmDialog`). React Query opérationnel.
+- Pages encore en **stub** : `Onboarding`, `Historique`, `Objectifs`, `Statistiques`, `Profil`.
+
+**Reste à faire (principal)**
+- **Onboarding** (3 étapes : revenus → répartition % → 1re dépense) — non implémenté.
+- Pages **`/reste`** et **`/section/:id`** — absentes (routes non créées).
+- Branchement API des pages autres que le dashboard.
+- `develop` est très en avance sur `main` : pas encore promu.
+
+---
+
 ## Stack
 
 ```
@@ -195,4 +219,4 @@ goal_contributions (id, goal_id, month_id, amount)
 
 ---
 
-*Kash · CLAUDE.md v3.4 · PERN · Drizzle ORM + Neon · Juin 2026*
+*Kash · CLAUDE.md v3.5 · PERN · Drizzle ORM + Neon · Juin 2026*
