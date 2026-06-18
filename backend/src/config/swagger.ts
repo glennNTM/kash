@@ -64,10 +64,16 @@ export const setupSwagger = (): void => {
     },
   }
 
-  docsApp.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
+  docsApp.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, swaggerUiOptions)
+  )
   docsApp.get('/', (_req, res) => res.redirect('/api-docs'))
 
   docsApp.listen(DOCS_PORT, () => {
-    console.log(`Documentation Swagger disponible sur: http://localhost:${DOCS_PORT}/api-docs`)
+    console.log(
+      `Documentation Swagger disponible sur: http://localhost:${DOCS_PORT}/api-docs`
+    )
   })
 }

@@ -1,7 +1,11 @@
 import type { Request, Response } from 'express'
 import * as monthsService from '../services/months.service.js'
 import { parseId } from '../lib/params.js'
-import type { CreateMonthInput, UpdateMonthInput } from '../validators/months.schema.js'
+import { monthByDateQuerySchema } from '../validators/months.schema.js'
+import type {
+  CreateMonthInput,
+  UpdateMonthInput,
+} from '../validators/months.schema.js'
 
 /**
  * @route   GET /api/months
@@ -11,6 +15,26 @@ import type { CreateMonthInput, UpdateMonthInput } from '../validators/months.sc
 export async function getAll(_req: Request, res: Response): Promise<void> {
   const userId = res.locals['userId'] as string
   const data = await monthsService.findAll(userId)
+  res.status(200).json({ data })
+}
+
+/**
+ * @route   GET /api/months/by-date?year=&month=
+ * @desc    Récupère le mois (année + mois) avec ses sections et dépenses imbriquées.
+ *          Sert le dashboard en une requête. 404 si aucun budget pour cette période.
+ * @access  Authentifié
+ */
+export async function getByDate(req: Request, res: Response): Promise<void> {
+  const userId = res.locals['userId'] as string
+  // La query est en lecture seule en Express 5 → on valide ici (ZodError → 400 via l'error handler).
+  const { year, month } = monthByDateQuerySchema.parse(req.query)
+  const data = await monthsService.findByDateWithDetails(userId, year, month)
+
+  if (!data) {
+    res.status(404).json({ error: 'Aucun budget pour ce mois.' })
+    return
+  }
+
   res.status(200).json({ data })
 }
 
@@ -51,7 +75,11 @@ export async function create(req: Request, res: Response): Promise<void> {
 export async function update(req: Request, res: Response): Promise<void> {
   const userId = res.locals['userId'] as string
   const id = parseId(req.params['id'], 'ID du mois')
-  const data = await monthsService.update(id, req.body as UpdateMonthInput, userId)
+  const data = await monthsService.update(
+    id,
+    req.body as UpdateMonthInput,
+    userId
+  )
   res.status(200).json({ data })
 }
 

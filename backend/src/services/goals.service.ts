@@ -3,15 +3,25 @@ import { db } from '../db/index.js'
 import { goals } from '../db/schema/index.js'
 import type { Goal } from '../db/schema/index.js'
 import { NotFoundError } from '../lib/errors.js'
-import type { CreateGoalInput, UpdateGoalInput } from '../validators/goals.schema.js'
+import type {
+  CreateGoalInput,
+  UpdateGoalInput,
+} from '../validators/goals.schema.js'
 
 // Récupère les objectifs de l'utilisateur, les plus récents d'abord.
 export async function findAll(userId: string): Promise<Goal[]> {
-  return db.select().from(goals).where(eq(goals.userId, userId)).orderBy(desc(goals.createdAt))
+  return db
+    .select()
+    .from(goals)
+    .where(eq(goals.userId, userId))
+    .orderBy(desc(goals.createdAt))
 }
 
 // Récupère un objectif de l'utilisateur par son ID.
-export async function findById(id: number, userId: string): Promise<Goal | null> {
+export async function findById(
+  id: number,
+  userId: string
+): Promise<Goal | null> {
   const result = await db
     .select()
     .from(goals)
@@ -21,7 +31,10 @@ export async function findById(id: number, userId: string): Promise<Goal | null>
 }
 
 // Crée un objectif pour l'utilisateur.
-export async function create(input: CreateGoalInput, userId: string): Promise<Goal> {
+export async function create(
+  input: CreateGoalInput,
+  userId: string
+): Promise<Goal> {
   const inserted = await db
     .insert(goals)
     .values({
@@ -29,7 +42,9 @@ export async function create(input: CreateGoalInput, userId: string): Promise<Go
       name: input.name,
       targetAmount: String(input.targetAmount),
       ...(input.deadline !== undefined && { deadline: input.deadline }),
-      ...(input.isCompleted !== undefined && { isCompleted: input.isCompleted }),
+      ...(input.isCompleted !== undefined && {
+        isCompleted: input.isCompleted,
+      }),
       ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
     })
     .returning()
@@ -37,14 +52,22 @@ export async function create(input: CreateGoalInput, userId: string): Promise<Go
 }
 
 // Met à jour un objectif possédé par l'utilisateur.
-export async function update(id: number, input: UpdateGoalInput, userId: string): Promise<Goal> {
+export async function update(
+  id: number,
+  input: UpdateGoalInput,
+  userId: string
+): Promise<Goal> {
   const updated = await db
     .update(goals)
     .set({
       ...(input.name !== undefined && { name: input.name }),
-      ...(input.targetAmount !== undefined && { targetAmount: String(input.targetAmount) }),
+      ...(input.targetAmount !== undefined && {
+        targetAmount: String(input.targetAmount),
+      }),
       ...(input.deadline !== undefined && { deadline: input.deadline }),
-      ...(input.isCompleted !== undefined && { isCompleted: input.isCompleted }),
+      ...(input.isCompleted !== undefined && {
+        isCompleted: input.isCompleted,
+      }),
       ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
     })
     .where(and(eq(goals.id, id), eq(goals.userId, userId)))

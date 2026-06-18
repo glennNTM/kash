@@ -12,7 +12,9 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').notNull().default(false),
   image: text('image'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true })
     .notNull()
     .defaultNow()
@@ -28,7 +30,9 @@ export const sessions = pgTable('sessions', {
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true })
     .notNull()
     .defaultNow()
@@ -44,12 +48,18 @@ export const accounts = pgTable('accounts', {
   providerId: text('provider_id').notNull(),
   accessToken: text('access_token'),
   refreshToken: text('refresh_token'),
-  accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }),
-  refreshTokenExpiresAt: timestamp('refresh_token_expires_at', { withTimezone: true }),
+  accessTokenExpiresAt: timestamp('access_token_expires_at', {
+    withTimezone: true,
+  }),
+  refreshTokenExpiresAt: timestamp('refresh_token_expires_at', {
+    withTimezone: true,
+  }),
   scope: text('scope'),
   idToken: text('id_token'),
   password: text('password'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true })
     .notNull()
     .defaultNow()

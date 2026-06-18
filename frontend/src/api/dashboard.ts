@@ -1,18 +1,58 @@
 import type { Month, DashboardStats, Expense } from '../types/budget'
-import { MOCK_MONTHS } from '../mocks/dashboardData'
+import { apiRequest, ApiError } from '../lib/api-client'
+import { humanizeError } from '../lib/errors'
+import { mapMonth, mapExpense, type MonthDTO, type ExpenseDTO } from './mappers'
 
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
+type Result<T> = { data: T } | { error: string }
 
-export async function getMonth(
-  year: number,
-  month: number,
-): Promise<{ data: Month } | { error: string }> {
-  await delay(400)
-  const found = MOCK_MONTHS.find((m) => m.year === year && m.month === month)
-  if (!found) return { error: 'Mois introuvable' }
-  return { data: found }
+const MONTH_NAMES = [
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+]
+
+// Enrobe un appel API dans le contrat { data } | { error } attendu par les hooks/composants.
+async function safe<T>(fn: () => Promise<T>): Promise<Result<T>> {
+  try {
+    return { data: await fn() }
+  } catch (err) {
+    return { error: err instanceof ApiError ? err.message : humanizeError(err) }
+  }
 }
 
+// Mois agrégé (sections + dépenses) pour le dashboard. `data: null` = aucun budget (404, pas une erreur).
+export async function getMonth(
+  year: number,
+  month: number
+): Promise<{ data: Month | null } | { error: string }> {
+  try {
+    const dto = await apiRequest<MonthDTO>(`/api/months/by-date?year=${year}&month=${month}`)
+    return { data: mapMonth(dto) }
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) return { data: null }
+    return { error: err instanceof ApiError ? err.message : humanizeError(err) }
+  }
+}
+
+// Crée le budget du mois avec la répartition par défaut 50/30/20 (revenu à 0, à renseigner ensuite).
+export async function createMonthWithDefaults(year: number, month: number): Promise<Result<true>> {
+  return safe(async () => {
+    const created = await apiRequest<MonthDTO>('/api/months', {
+      method: 'POST',
+      body: { name: `${MONTH_NAMES[month - 1]} ${year}`, month, year, totalIncome: 0 },
+    })
+    const defaults = [
+      { name: 'Charges fixes', type: 'charges', percentage: 0.5, sortOrder: 0 },
+      { name: 'Épargne & objectifs', type: 'epargne', percentage: 0.3, sortOrder: 1 },
+      { name: 'Loisirs & plaisirs', type: 'loisirs', percentage: 0.2, sortOrder: 2 },
+    ] as const
+    for (const section of defaults) {
+      await apiRequest('/api/sections', { method: 'POST', body: { monthId: created.id, ...section } })
+    }
+    return true as const
+  })
+}
+
+// Statistiques dérivées du mois — calcul client, jamais stocké.
 export function computeStats(month: Month): DashboardStats {
   let totalSpent = 0
   const sections = month.sections.map((sec) => {
@@ -48,84 +88,65 @@ export function computeStats(month: Month): DashboardStats {
 }
 
 export async function addExpense(
-  sectionId: string,
-  expense: Omit<Expense, 'id' | 'sectionId'>,
-): Promise<{ data: Expense } | { error: string }> {
-  await delay(300)
-  const newExpense: Expense = {
-    ...expense,
-    id: `e-${Date.now()}`,
-    sectionId,
-  }
-  const month = MOCK_MONTHS.find((m) =>
-    m.sections.some((s) => s.id === sectionId),
-  )
-  const section = month?.sections.find((s) => s.id === sectionId)
-  if (!section) return { error: 'Section introuvable' }
-  section.expenses.push(newExpense)
-  return { data: newExpense }
+  sectionId: number,
+  expense: Omit<Expense, 'id' | 'sectionId'>
+): Promise<Result<Expense>> {
+  return safe(async () => {
+    const dto = await apiRequest<ExpenseDTO>('/api/expenses', {
+      method: 'POST',
+      body: {
+        sectionId,
+        name: expense.label,
+        category: expense.category,
+        amountPlanned: expense.amountPlanned,
+        // null → omis (le backend attend un number optionnel). paidAt est géré côté serveur.
+        amountReal: expense.amountReal ?? undefined,
+        status: expense.status,
+        isRecurring: expense.isRecurring,
+      },
+    })
+    return mapExpense(dto)
+  })
 }
 
 export async function updatePercentages(
-  monthId: string,
-  percentages: Record<string, number>,
-): Promise<{ data: true } | { error: string }> {
-  await delay(300)
-  const month = MOCK_MONTHS.find((m) => m.id === monthId)
-  if (!month) return { error: 'Mois introuvable' }
-  const total = Object.values(percentages).reduce((s, v) => s + v, 0)
-  if (Math.round(total * 100) !== 100) return { error: 'La somme doit être égale à 100 %' }
-  for (const section of month.sections) {
-    if (percentages[section.id] !== undefined) {
-      section.percentage = percentages[section.id]
-    }
-  }
-  return { data: true }
+  monthId: number,
+  percentages: Record<string, number>
+): Promise<Result<true>> {
+  return safe(async () => {
+    await apiRequest(`/api/sections/month/${monthId}/percentages`, {
+      method: 'PUT',
+      body: {
+        percentages: Object.entries(percentages).map(([id, percentage]) => ({
+          id: Number(id),
+          percentage,
+        })),
+      },
+    })
+    return true as const
+  })
 }
 
-export async function renameSection(
-  sectionId: string,
-  name: string,
-): Promise<{ data: true } | { error: string }> {
-  await delay(200)
-  for (const month of MOCK_MONTHS) {
-    const section = month.sections.find((s) => s.id === sectionId)
-    if (section) {
-      section.name = name.trim()
-      return { data: true }
-    }
-  }
-  return { error: 'Section introuvable' }
+export async function renameSection(sectionId: number, name: string): Promise<Result<true>> {
+  return safe(async () => {
+    await apiRequest(`/api/sections/${sectionId}`, { method: 'PUT', body: { name: name.trim() } })
+    return true as const
+  })
 }
 
-export async function deleteExpense(
-  expenseId: string,
-): Promise<{ data: true } | { error: string }> {
-  await delay(200)
-  for (const month of MOCK_MONTHS) {
-    for (const section of month.sections) {
-      const idx = section.expenses.findIndex((e) => e.id === expenseId)
-      if (idx !== -1) {
-        section.expenses.splice(idx, 1)
-        return { data: true }
-      }
-    }
-  }
-  return { error: 'Dépense introuvable' }
+export async function deleteExpense(expenseId: number): Promise<Result<true>> {
+  return safe(async () => {
+    await apiRequest(`/api/expenses/${expenseId}`, { method: 'DELETE' })
+    return true as const
+  })
 }
 
-export async function toggleRecurring(
-  expenseId: string,
-): Promise<{ data: Expense } | { error: string }> {
-  await delay(200)
-  for (const month of MOCK_MONTHS) {
-    for (const section of month.sections) {
-      const expense = section.expenses.find((e) => e.id === expenseId)
-      if (expense) {
-        expense.isRecurring = !expense.isRecurring
-        return { data: expense }
-      }
-    }
-  }
-  return { error: 'Dépense introuvable' }
+export async function toggleRecurring(expenseId: number, isRecurring: boolean): Promise<Result<Expense>> {
+  return safe(async () => {
+    const dto = await apiRequest<ExpenseDTO>(`/api/expenses/${expenseId}`, {
+      method: 'PUT',
+      body: { isRecurring },
+    })
+    return mapExpense(dto)
+  })
 }

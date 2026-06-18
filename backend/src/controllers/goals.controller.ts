@@ -1,7 +1,10 @@
 import type { Request, Response } from 'express'
 import * as goalsService from '../services/goals.service.js'
 import { parseId } from '../lib/params.js'
-import type { CreateGoalInput, UpdateGoalInput } from '../validators/goals.schema.js'
+import type {
+  CreateGoalInput,
+  UpdateGoalInput,
+} from '../validators/goals.schema.js'
 
 /**
  * @route   GET /api/goals
@@ -51,7 +54,11 @@ export async function create(req: Request, res: Response): Promise<void> {
 export async function update(req: Request, res: Response): Promise<void> {
   const userId = res.locals['userId'] as string
   const id = parseId(req.params['id'], "ID de l'objectif")
-  const data = await goalsService.update(id, req.body as UpdateGoalInput, userId)
+  const data = await goalsService.update(
+    id,
+    req.body as UpdateGoalInput,
+    userId
+  )
   res.status(200).json({ data })
 }
 

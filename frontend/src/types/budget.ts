@@ -2,8 +2,8 @@ export type SectionType = 'charges' | 'epargne' | 'loisirs' | 'custom'
 export type ExpenseStatus = 'planned' | 'paid'
 
 export interface Expense {
-  id: string
-  sectionId: string
+  id: number
+  sectionId: number
   label: string
   category: string
   amountPlanned: number
@@ -14,8 +14,8 @@ export interface Expense {
 }
 
 export interface Section {
-  id: string
-  monthId: string
+  id: number
+  monthId: number
   name: string
   type: SectionType
   percentage: number
@@ -23,7 +23,7 @@ export interface Section {
 }
 
 export interface Month {
-  id: string
+  id: number
   userId: string
   month: number
   year: number
@@ -33,7 +33,7 @@ export interface Month {
 
 /** Données calculées pour l'affichage — dérivées de Month, jamais stockées */
 export interface SectionStats {
-  sectionId: string
+  sectionId: number
   allocated: number
   spent: number
   remaining: number

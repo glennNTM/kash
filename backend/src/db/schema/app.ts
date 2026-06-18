@@ -1,9 +1,24 @@
-import { pgTable, pgEnum, text, varchar, integer, boolean, numeric, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import {
+  pgTable,
+  pgEnum,
+  text,
+  varchar,
+  integer,
+  boolean,
+  numeric,
+  timestamp,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core'
 import { users } from './auth.js'
 import { timestamps } from './helpers.js'
 
 // ── Enums ────────────────────────────────────────────────────
-export const sectionType = pgEnum('section_type', ['charges', 'epargne', 'loisirs', 'custom'])
+export const sectionType = pgEnum('section_type', [
+  'charges',
+  'epargne',
+  'loisirs',
+  'custom',
+])
 export const expenseStatus = pgEnum('expense_status', ['planned', 'paid'])
 
 // ── Mois ─────────────────────────────────────────────────────
@@ -17,10 +32,14 @@ export const months = pgTable(
     name: varchar('name', { length: 255 }).notNull(),
     month: integer('month').notNull(), // 1–12
     year: integer('year').notNull(),
-    totalIncome: numeric('total_income', { precision: 15, scale: 2 }).notNull().default('0'),
+    totalIncome: numeric('total_income', { precision: 15, scale: 2 })
+      .notNull()
+      .default('0'),
     ...timestamps,
   },
-  t => [uniqueIndex('months_user_month_year_unique').on(t.userId, t.month, t.year)]
+  t => [
+    uniqueIndex('months_user_month_year_unique').on(t.userId, t.month, t.year),
+  ]
 )
 
 export type Month = typeof months.$inferSelect
@@ -65,7 +84,10 @@ export const expenses = pgTable('expenses', {
     .references(() => sections.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }).notNull(),
   category: text('category'),
-  amountPlanned: numeric('amount_planned', { precision: 15, scale: 2 }).notNull(),
+  amountPlanned: numeric('amount_planned', {
+    precision: 15,
+    scale: 2,
+  }).notNull(),
   amountReal: numeric('amount_real', { precision: 15, scale: 2 }),
   status: expenseStatus('status').notNull().default('planned'),
   paidAt: timestamp('paid_at', { withTimezone: true }),
@@ -109,7 +131,9 @@ export const goalContributions = pgTable(
     amount: numeric('amount', { precision: 15, scale: 2 }).notNull(),
     ...timestamps,
   },
-  t => [uniqueIndex('goal_contributions_goal_month_unique').on(t.goalId, t.monthId)]
+  t => [
+    uniqueIndex('goal_contributions_goal_month_unique').on(t.goalId, t.monthId),
+  ]
 )
 
 export type GoalContribution = typeof goalContributions.$inferSelect

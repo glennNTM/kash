@@ -42,7 +42,7 @@ export default function SectionDetailModal({
   onRename,
 }: SectionDetailModalProps) {
   const [showForm, setShowForm] = useState(false)
-  const [pendingDelete, setPendingDelete] = useState<{ id: string; label: string } | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<{ id: number; label: string } | null>(null)
 
   const addExpense = useAddExpense(year, month)
   const toggleRecurring = useToggleRecurring(year, month)
@@ -96,8 +96,8 @@ export default function SectionDetailModal({
     setShowForm(false)
   }
 
-  async function handleToggleRecurring(expenseId: string) {
-    const res = await toggleRecurring.mutateAsync(expenseId)
+  async function handleToggleRecurring(expenseId: number, isRecurring: boolean) {
+    const res = await toggleRecurring.mutateAsync({ expenseId, isRecurring })
     if ('error' in res) toast.error(res.error)
   }
 
@@ -200,7 +200,7 @@ export default function SectionDetailModal({
                 {/* Étoile récurrence */}
                 <button
                   type="button"
-                  onClick={() => handleToggleRecurring(expense.id)}
+                  onClick={() => handleToggleRecurring(expense.id, !expense.isRecurring)}
                   aria-label={expense.isRecurring ? 'Retirer des récurrentes' : 'Répéter le mois prochain'}
                   className="shrink-0 transition-transform duration-(--duration-fast) active:scale-90"
                 >

@@ -1,6 +1,13 @@
 import { relations } from 'drizzle-orm'
 import { users, sessions, accounts } from './auth.js'
-import { months, incomes, sections, expenses, goals, goalContributions } from './app.js'
+import {
+  months,
+  incomes,
+  sections,
+  expenses,
+  goals,
+  goalContributions,
+} from './app.js'
 
 // ── Auth ─────────────────────────────────────────────────────
 export const usersRelations = relations(users, ({ many }) => ({
@@ -36,7 +43,10 @@ export const sectionsRelations = relations(sections, ({ one, many }) => ({
 }))
 
 export const expensesRelations = relations(expenses, ({ one }) => ({
-  section: one(sections, { fields: [expenses.sectionId], references: [sections.id] }),
+  section: one(sections, {
+    fields: [expenses.sectionId],
+    references: [sections.id],
+  }),
 }))
 
 export const goalsRelations = relations(goals, ({ one, many }) => ({
@@ -44,7 +54,16 @@ export const goalsRelations = relations(goals, ({ one, many }) => ({
   goalContributions: many(goalContributions),
 }))
 
-export const goalContributionsRelations = relations(goalContributions, ({ one }) => ({
-  goal: one(goals, { fields: [goalContributions.goalId], references: [goals.id] }),
-  month: one(months, { fields: [goalContributions.monthId], references: [months.id] }),
-}))
+export const goalContributionsRelations = relations(
+  goalContributions,
+  ({ one }) => ({
+    goal: one(goals, {
+      fields: [goalContributions.goalId],
+      references: [goals.id],
+    }),
+    month: one(months, {
+      fields: [goalContributions.monthId],
+      references: [months.id],
+    }),
+  })
+)

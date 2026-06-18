@@ -9,7 +9,7 @@ import type { Section } from '../../types/budget'
 const MIN_PCT = 0.1  // 10 %
 
 interface AdjustPercentagesModalProps {
-  monthId: string
+  monthId: number
   sections: Section[]
   year: number
   month: number
@@ -36,7 +36,7 @@ export default function AdjustPercentagesModal({
   const totalPct = Math.round(total * 100)
   const isValid = totalPct === 100 && Object.values(values).every((v) => v >= MIN_PCT)
 
-  function handleChange(sectionId: string, raw: string) {
+  function handleChange(sectionId: number, raw: string) {
     const num = parseFloat(raw)
     if (isNaN(num)) return
     setValues((prev) => ({ ...prev, [sectionId]: +(num / 100).toFixed(4) }))

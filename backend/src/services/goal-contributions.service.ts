@@ -10,13 +10,22 @@ import type {
 } from '../validators/goal-contributions.schema.js'
 
 // Récupère les contributions d'un objectif appartenant à l'utilisateur.
-export async function findByGoal(goalId: number, userId: string): Promise<GoalContribution[]> {
+export async function findByGoal(
+  goalId: number,
+  userId: string
+): Promise<GoalContribution[]> {
   await assertGoalOwnership(goalId, userId)
-  return db.select().from(goalContributions).where(eq(goalContributions.goalId, goalId))
+  return db
+    .select()
+    .from(goalContributions)
+    .where(eq(goalContributions.goalId, goalId))
 }
 
 // Récupère une contribution par son ID, en vérifiant l'appartenance via l'objectif.
-export async function findById(id: number, userId: string): Promise<GoalContribution | null> {
+export async function findById(
+  id: number,
+  userId: string
+): Promise<GoalContribution | null> {
   const result = await db
     .select({ contribution: goalContributions })
     .from(goalContributions)
@@ -28,7 +37,10 @@ export async function findById(id: number, userId: string): Promise<GoalContribu
 
 // Crée une contribution. L'objectif ET le mois doivent appartenir à l'utilisateur.
 // La contrainte unique (goalId, monthId) → 409 via l'error handler.
-export async function create(input: CreateGoalContributionInput, userId: string): Promise<GoalContribution> {
+export async function create(
+  input: CreateGoalContributionInput,
+  userId: string
+): Promise<GoalContribution> {
   await assertGoalOwnership(input.goalId, userId)
   await assertMonthOwnership(input.monthId, userId)
 

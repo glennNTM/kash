@@ -8,8 +8,15 @@ import { NotFoundError } from './errors.js'
  * Renvoie 404 (et non 403) que le mois soit inexistant ou possédé par un autre,
  * pour ne pas divulguer l'existence des ressources d'autrui.
  */
-export async function assertMonthOwnership(monthId: number, userId: string): Promise<void> {
-  const result = await db.select({ userId: months.userId }).from(months).where(eq(months.id, monthId)).limit(1)
+export async function assertMonthOwnership(
+  monthId: number,
+  userId: string
+): Promise<void> {
+  const result = await db
+    .select({ userId: months.userId })
+    .from(months)
+    .where(eq(months.id, monthId))
+    .limit(1)
 
   const month = result[0]
   if (!month || month.userId !== userId) {
@@ -21,7 +28,10 @@ export async function assertMonthOwnership(monthId: number, userId: string): Pro
  * Vérifie qu'une section appartient à l'utilisateur (via son mois).
  * Même politique que ci-dessus : 404 si inexistante ou possédée par un autre.
  */
-export async function assertSectionOwnership(sectionId: number, userId: string): Promise<void> {
+export async function assertSectionOwnership(
+  sectionId: number,
+  userId: string
+): Promise<void> {
   const result = await db
     .select({ userId: months.userId })
     .from(sections)
@@ -39,8 +49,15 @@ export async function assertSectionOwnership(sectionId: number, userId: string):
  * Vérifie qu'un objectif appartient à l'utilisateur.
  * Même politique : 404 si inexistant ou possédé par un autre.
  */
-export async function assertGoalOwnership(goalId: number, userId: string): Promise<void> {
-  const result = await db.select({ userId: goals.userId }).from(goals).where(eq(goals.id, goalId)).limit(1)
+export async function assertGoalOwnership(
+  goalId: number,
+  userId: string
+): Promise<void> {
+  const result = await db
+    .select({ userId: goals.userId })
+    .from(goals)
+    .where(eq(goals.id, goalId))
+    .limit(1)
 
   const row = result[0]
   if (!row || row.userId !== userId) {

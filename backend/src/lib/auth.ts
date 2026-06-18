@@ -30,6 +30,7 @@ export const auth = betterAuth({
     usePlural: true,
     schema,
   }),
+
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,

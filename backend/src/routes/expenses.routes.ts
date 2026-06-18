@@ -1,8 +1,17 @@
 import { Router } from 'express'
 import { requireAuth } from '../middlewares/auth.middleware.js'
 import { validate } from '../middlewares/validate.middleware.js'
-import { createExpenseSchema, updateExpenseSchema } from '../validators/expenses.schema.js'
-import { getBySection, getById, create, update, remove } from '../controllers/expenses.controller.js'
+import {
+  createExpenseSchema,
+  updateExpenseSchema,
+} from '../validators/expenses.schema.js'
+import {
+  getBySection,
+  getById,
+  create,
+  update,
+  remove,
+} from '../controllers/expenses.controller.js'
 
 const expensesRouter: ReturnType<typeof Router> = Router()
 
