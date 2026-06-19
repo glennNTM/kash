@@ -6,6 +6,7 @@
   "author": "Glenn NTOUTOUME",
   "type": "module",
   "main": "index.js",
+  "packageManager": "pnpm@10.30.3",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",

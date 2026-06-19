@@ -18,9 +18,8 @@ vi.mock('../../src/services/onboarding.service.js', () => ({
   createOnboarding: vi.fn(),
 }))
 
-const { createOnboarding } = await import(
-  '../../src/services/onboarding.service.js'
-)
+const { createOnboarding } =
+  await import('../../src/services/onboarding.service.js')
 const { default: app } = await import('../../src/app.js')
 
 function validPayload() {

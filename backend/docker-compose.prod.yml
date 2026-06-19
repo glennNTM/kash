@@ -1,0 +1,13 @@
+# Prod : image finale (non-root, deps de prod uniquement), redémarrage auto.
+# La base reste Neon (DATABASE_URL dans .env).
+services:
+  api:
+    build:
+      context: .
+      target: prod
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+    ports:
+      - '8000:8000'
+    restart: unless-stopped

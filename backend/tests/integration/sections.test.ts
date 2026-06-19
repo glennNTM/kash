@@ -37,7 +37,9 @@ describe('sections — routes', () => {
 
   it('POST /api/sections propage une 400 quand la somme des % dépasserait 100%', async () => {
     vi.mocked(sectionsService.create).mockRejectedValue(
-      new BadRequestError('La somme des pourcentages des sections dépasserait 100%.')
+      new BadRequestError(
+        'La somme des pourcentages des sections dépasserait 100%.'
+      )
     )
 
     const res = await request(app).post('/api/sections').send({

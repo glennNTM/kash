@@ -40,7 +40,11 @@ export const onboardingSchema = z
     firstExpense: z.object({
       // Index de la section cible dans `allocation` (les sections n'ont pas encore d'ID).
       sectionIndex: z.number().int().min(0),
-      name: z.string().trim().min(1, 'Le nom de la dépense est requis.').max(255),
+      name: z
+        .string()
+        .trim()
+        .min(1, 'Le nom de la dépense est requis.')
+        .max(255),
       category: z.string().trim().max(255).optional(),
       amountPlanned: z
         .number()
