@@ -14,6 +14,13 @@ export {
   BarChart3,
   History,
   Target,
+
+  // Statistiques (titres de graphes)
+  TrendingUp,
+  PieChart,
+  Radar,
+  Layers,
+
   PanelLeftClose,
   PanelLeftOpen,
   Menu,

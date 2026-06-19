@@ -1,6 +1,9 @@
 import { useNavigate } from 'react-router-dom'
+import { Doughnut } from 'react-chartjs-2'
+import type { ChartOptions, TooltipItem } from 'chart.js'
 import { ArrowRight } from '../../lib/icons'
 import { formatPercent } from '../../lib/format'
+import { resolveChartColors } from '../../lib/chart'
 import type { DashboardStats } from '../../types/budget'
 
 interface StatsPreviewCardProps {
@@ -8,16 +11,37 @@ interface StatsPreviewCardProps {
   sections: { name: string; percentage: number }[]
 }
 
-const SECTION_COLORS = [
-  'var(--accent)',
-  'var(--warning)',
-  'rgba(26,158,110,0.4)',
-  'var(--neutral)',
-]
-
 export default function StatsPreviewCard({ stats, sections }: StatsPreviewCardProps) {
   const navigate = useNavigate()
   const total = stats.totalIncome || 1
+  const colors = resolveChartColors()
+  const palette = sections.map((_, i) => colors.sections[i % colors.sections.length] as string)
+
+  const data = {
+    labels: sections.map((s) => s.name),
+    datasets: [
+      {
+        data: sections.map((s) => s.percentage * 100),
+        backgroundColor: palette,
+        borderWidth: 0,
+      },
+    ],
+  }
+
+  const options: ChartOptions<'doughnut'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx: TooltipItem<'doughnut'>) =>
+            ` ${ctx.label} : ${Math.round(Number(ctx.parsed))} %`,
+        },
+      },
+    },
+  }
 
   return (
     <button
@@ -34,17 +58,9 @@ export default function StatsPreviewCard({ stats, sections }: StatsPreviewCardPr
         </span>
       </div>
 
-      {/* Donut simplifié — barre segmentée */}
-      <div className="flex h-2.5 w-full rounded-full overflow-hidden gap-px">
-        {sections.map((sec, i) => (
-          <div
-            key={sec.name}
-            style={{
-              width: `${sec.percentage * 100}%`,
-              background: SECTION_COLORS[i % SECTION_COLORS.length],
-            }}
-          />
-        ))}
+      {/* Doughnut de la répartition allouée */}
+      <div className="relative h-32">
+        <Doughnut data={data} options={options} />
       </div>
 
       {/* Légende */}
@@ -56,7 +72,7 @@ export default function StatsPreviewCard({ stats, sections }: StatsPreviewCardPr
               <span className="flex items-center gap-2 text-(--t-2)">
                 <span
                   className="size-2 rounded-full shrink-0"
-                  style={{ background: SECTION_COLORS[i % SECTION_COLORS.length] }}
+                  style={{ background: palette[i] }}
                 />
                 {sec.name}
               </span>

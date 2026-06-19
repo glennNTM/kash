@@ -14,6 +14,6 @@ export const useUiStore = create<UiState>()(
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
     }),
-    { name: 'kash-ui' },
-  ),
+    { name: 'kash-ui' }
+  )
 )
