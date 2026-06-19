@@ -6,12 +6,20 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { signIn, signUp } from '../../lib/auth-client'
+import { humanizeError } from '../../lib/errors'
 import googleIcon from '../../assets/google-color-svgrepo-com.svg'
 
+// Schéma de base (login) : name optionnel → un seul type partagé pour les deux modes.
 const authSchema = z.object({
-  name: z.string().min(2, 'Nom trop court').optional(),
+  name: z.string().optional(),
   email: z.string().email('Adresse e-mail invalide'),
   password: z.string().min(8, 'Mot de passe trop court (8 caractères minimum)'),
+})
+
+// Inscription : le nom devient requis (≥ 2 caractères). `.refine` ne change pas le type inféré.
+const registerSchema = authSchema.refine((val) => (val.name?.trim().length ?? 0) >= 2, {
+  path: ['name'],
+  message: 'Nom trop court',
 })
 
 type AuthData = z.infer<typeof authSchema>
@@ -34,27 +42,28 @@ export default function LoginForm({ mode = 'login' }: { mode?: Mode }) {
   const [showPassword, setShowPassword] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
 
+  const isRegister = mode === 'register'
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<AuthData>({ resolver: zodResolver(authSchema) })
-
-  const isRegister = mode === 'register'
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<AuthData>({
+    resolver: zodResolver(isRegister ? registerSchema : authSchema),
+    mode: 'onTouched', // valide au blur puis en live — on ne gronde pas à la 1re frappe
+  })
 
   const onSubmit = async (values: AuthData) => {
     if (isRegister) {
-      if (!values.name) {
-        toast.error('Le nom est requis.')
-        return
-      }
+      const name = values.name?.trim()
+      if (!name) return // garde-fou : le schéma exige déjà le nom
       const { error } = await signUp.email({
-        name: values.name,
+        name,
         email: values.email,
         password: values.password,
       })
       if (error) {
-        toast.error(error.message ?? "Échec de l'inscription.")
+        toast.error(humanizeError(error))
         return
       }
       // autoSignIn est activé côté backend → session déjà posée.
@@ -67,7 +76,7 @@ export default function LoginForm({ mode = 'login' }: { mode?: Mode }) {
       password: values.password,
     })
     if (error) {
-      toast.error(error.message ?? 'Identifiants invalides.')
+      toast.error(humanizeError(error))
       return
     }
     navigate('/dashboard', { replace: true })
@@ -81,7 +90,7 @@ export default function LoginForm({ mode = 'login' }: { mode?: Mode }) {
     })
     // En cas de succès, le navigateur est redirigé vers Google : pas de retour ici.
     if (error) {
-      toast.error(error.message ?? 'Connexion Google impossible.')
+      toast.error(humanizeError(error))
       setGoogleLoading(false)
     }
   }
@@ -207,7 +216,7 @@ export default function LoginForm({ mode = 'login' }: { mode?: Mode }) {
         {/* Submit */}
         <button
           type="submit"
-          disabled={busy}
+          disabled={!isValid || busy}
           className="w-full flex items-center justify-center gap-2 bg-(--accent) text-white font-semibold py-3.5 rounded-full hover:bg-(--accent-hover) transition-colors active:scale-97 disabled:opacity-60 disabled:cursor-not-allowed mt-1"
           style={{ fontSize: 'var(--text-body-l)', transitionDuration: 'var(--duration-fast)' }}
         >

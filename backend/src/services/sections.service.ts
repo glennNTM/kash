@@ -4,19 +4,33 @@ import { sections, months } from '../db/schema/index.js'
 import type { Section } from '../db/schema/index.js'
 import { assertMonthOwnership } from '../lib/ownership.js'
 import { BadRequestError, NotFoundError } from '../lib/errors.js'
-import type { CreateSectionInput, UpdateSectionInput } from '../validators/sections.schema.js'
+import type {
+  CreateSectionInput,
+  UpdateSectionInput,
+  UpdatePercentagesInput,
+} from '../validators/sections.schema.js'
 
 // Tolérance flottante pour la somme des pourcentages (évite de rejeter un 100% légitime).
 const EPSILON = 1e-9
 
 // Récupère les sections d'un mois appartenant à l'utilisateur, ordonnées.
-export async function findByMonth(monthId: number, userId: string): Promise<Section[]> {
+export async function findByMonth(
+  monthId: number,
+  userId: string
+): Promise<Section[]> {
   await assertMonthOwnership(monthId, userId)
-  return db.select().from(sections).where(eq(sections.monthId, monthId)).orderBy(sections.sortOrder)
+  return db
+    .select()
+    .from(sections)
+    .where(eq(sections.monthId, monthId))
+    .orderBy(sections.sortOrder)
 }
 
 // Récupère une section par son ID, en vérifiant l'appartenance via le mois.
-export async function findById(id: number, userId: string): Promise<Section | null> {
+export async function findById(
+  id: number,
+  userId: string
+): Promise<Section | null> {
   const result = await db
     .select({ section: sections })
     .from(sections)
@@ -27,10 +41,13 @@ export async function findById(id: number, userId: string): Promise<Section | nu
 }
 
 // Crée une section. Refuse si la somme des pourcentages du mois dépasse 100%.
-export async function create(input: CreateSectionInput, userId: string): Promise<Section> {
+export async function create(
+  input: CreateSectionInput,
+  userId: string
+): Promise<Section> {
   await assertMonthOwnership(input.monthId, userId)
 
-  return db.transaction(async (tx) => {
+  return db.transaction(async tx => {
     const existing = await tx
       .select({ total: sum(sections.percentage) })
       .from(sections)
@@ -38,7 +55,9 @@ export async function create(input: CreateSectionInput, userId: string): Promise
 
     const currentTotal = Number(existing[0]?.total ?? 0)
     if (currentTotal + input.percentage > 1 + EPSILON) {
-      throw new BadRequestError('La somme des pourcentages des sections dépasserait 100%.')
+      throw new BadRequestError(
+        'La somme des pourcentages des sections dépasserait 100%.'
+      )
     }
 
     const inserted = await tx
@@ -60,9 +79,9 @@ export async function create(input: CreateSectionInput, userId: string): Promise
 export async function update(
   id: number,
   input: UpdateSectionInput,
-  userId: string,
+  userId: string
 ): Promise<Section> {
-  return db.transaction(async (tx) => {
+  return db.transaction(async tx => {
     const found = await tx
       .select({ section: sections })
       .from(sections)
@@ -82,7 +101,9 @@ export async function update(
 
       const othersTotal = Number(others[0]?.total ?? 0)
       if (othersTotal + input.percentage > 1 + EPSILON) {
-        throw new BadRequestError('La somme des pourcentages des sections dépasserait 100%.')
+        throw new BadRequestError(
+          'La somme des pourcentages des sections dépasserait 100%.'
+        )
       }
     }
 
@@ -91,13 +112,63 @@ export async function update(
       .set({
         ...(input.name !== undefined && { name: input.name }),
         ...(input.type !== undefined && { type: input.type }),
-        ...(input.percentage !== undefined && { percentage: String(input.percentage) }),
+        ...(input.percentage !== undefined && {
+          percentage: String(input.percentage),
+        }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
       })
       .where(eq(sections.id, id))
       .returning()
 
     return updated[0]!
+  })
+}
+
+// Met à jour la répartition complète d'un mois en une transaction.
+// Doit couvrir EXACTEMENT les sections du mois, et leur somme doit valoir 100%.
+export async function updatePercentages(
+  monthId: number,
+  userId: string,
+  items: UpdatePercentagesInput['percentages']
+): Promise<Section[]> {
+  await assertMonthOwnership(monthId, userId)
+
+  return db.transaction(async tx => {
+    const monthSections = await tx
+      .select({ id: sections.id })
+      .from(sections)
+      .where(eq(sections.monthId, monthId))
+    const monthIds = new Set(monthSections.map(s => s.id))
+
+    // Toutes les sections du mois doivent être fournies, et aucune section étrangère.
+    if (
+      items.length !== monthIds.size ||
+      items.some(i => !monthIds.has(i.id))
+    ) {
+      throw new BadRequestError(
+        'La répartition doit couvrir exactement les sections du mois.'
+      )
+    }
+
+    const total = items.reduce((acc, i) => acc + i.percentage, 0)
+    if (Math.abs(total - 1) > EPSILON) {
+      throw new BadRequestError(
+        'La somme des pourcentages doit être égale à 100%.'
+      )
+    }
+
+    for (const item of items) {
+      await tx
+        .update(sections)
+        .set({ percentage: String(item.percentage) })
+        .where(eq(sections.id, item.id))
+    }
+
+    return tx
+      .select()
+      .from(sections)
+      .where(eq(sections.monthId, monthId))
+      .orderBy(sections.sortOrder)
   })
 }
 

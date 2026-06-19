@@ -1,9 +1,19 @@
 import { eq, and, desc } from 'drizzle-orm'
 import { db } from '../db/index.js'
 import { months } from '../db/schema/index.js'
-import type { Month, NewMonth } from '../db/schema/index.js'
+import type { Month, Section, Expense } from '../db/schema/index.js'
+import { NotFoundError } from '../lib/errors.js'
+import type {
+  CreateMonthInput,
+  UpdateMonthInput,
+} from '../validators/months.schema.js'
 
-// Logique pour récupèrer tous les mois de l'utilisateur connecté
+// Mois enrichi de ses sections (triées), chacune avec ses dépenses (triées).
+export type MonthWithDetails = Month & {
+  sections: (Section & { expenses: Expense[] })[]
+}
+
+// Récupère tous les mois de l'utilisateur connecté, du plus récent au plus ancien.
 export async function findAll(userId: string): Promise<Month[]> {
   return db
     .select()
@@ -12,8 +22,38 @@ export async function findAll(userId: string): Promise<Month[]> {
     .orderBy(desc(months.year), desc(months.month))
 }
 
-// Logique pour récupèrer un mois spécifique par son ID
-export async function findById(id: number, userId: string): Promise<Month | null> {
+// Récupère le mois (année + mois) de l'utilisateur avec ses sections et dépenses imbriquées.
+// Sert le dashboard en une seule requête. Renvoie null si aucun budget pour cette période.
+export async function findByDateWithDetails(
+  userId: string,
+  year: number,
+  month: number
+): Promise<MonthWithDetails | null> {
+  const result = await db.query.months.findFirst({
+    where: and(
+      eq(months.userId, userId),
+      eq(months.year, year),
+      eq(months.month, month)
+    ),
+    with: {
+      sections: {
+        orderBy: (s, { asc }) => [asc(s.sortOrder)],
+        with: {
+          expenses: {
+            orderBy: (e, { asc }) => [asc(e.sortOrder)],
+          },
+        },
+      },
+    },
+  })
+  return result ?? null
+}
+
+// Récupère un mois de l'utilisateur par son ID.
+export async function findById(
+  id: number,
+  userId: string
+): Promise<Month | null> {
   const result = await db
     .select()
     .from(months)
@@ -22,12 +62,56 @@ export async function findById(id: number, userId: string): Promise<Month | null
   return result[0] ?? null
 }
 
-export async function create(_data: Partial<NewMonth>): Promise<Month | null> {
-  return null
+// Crée un mois pour l'utilisateur. La contrainte unique (userId, month, year) → 409 via l'error handler.
+export async function create(
+  input: CreateMonthInput,
+  userId: string
+): Promise<Month> {
+  const inserted = await db
+    .insert(months)
+    .values({
+      userId,
+      name: input.name,
+      month: input.month,
+      year: input.year,
+      ...(input.totalIncome !== undefined && {
+        totalIncome: String(input.totalIncome),
+      }),
+    })
+    .returning()
+  return inserted[0]!
 }
 
-export async function update(_id: number, _data: Partial<NewMonth>): Promise<Month | null> {
-  return null
+// Met à jour un mois possédé par l'utilisateur.
+export async function update(
+  id: number,
+  input: UpdateMonthInput,
+  userId: string
+): Promise<Month> {
+  const updated = await db
+    .update(months)
+    .set({
+      ...(input.name !== undefined && { name: input.name }),
+      ...(input.month !== undefined && { month: input.month }),
+      ...(input.year !== undefined && { year: input.year }),
+      ...(input.totalIncome !== undefined && {
+        totalIncome: String(input.totalIncome),
+      }),
+    })
+    .where(and(eq(months.id, id), eq(months.userId, userId)))
+    .returning()
+
+  const row = updated[0]
+  if (!row) throw new NotFoundError('Mois introuvable.')
+  return row
 }
 
-export async function remove(_id: number): Promise<void> {}
+// Supprime un mois possédé par l'utilisateur (cascade sur sections/incomes/contributions).
+export async function remove(id: number, userId: string): Promise<void> {
+  const deleted = await db
+    .delete(months)
+    .where(and(eq(months.id, id), eq(months.userId, userId)))
+    .returning({ id: months.id })
+
+  if (!deleted[0]) throw new NotFoundError('Mois introuvable.')
+}

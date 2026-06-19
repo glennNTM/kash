@@ -104,12 +104,8 @@
           "name": "expenses_section_id_sections_id_fk",
           "tableFrom": "expenses",
           "tableTo": "sections",
-          "columnsFrom": [
-            "section_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["section_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -208,12 +204,8 @@
           "name": "goal_contributions_goal_id_goals_id_fk",
           "tableFrom": "goal_contributions",
           "tableTo": "goals",
-          "columnsFrom": [
-            "goal_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["goal_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -221,12 +213,8 @@
           "name": "goal_contributions_month_id_months_id_fk",
           "tableFrom": "goal_contributions",
           "tableTo": "months",
-          "columnsFrom": [
-            "month_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["month_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -317,12 +305,8 @@
           "name": "goals_user_id_users_id_fk",
           "tableFrom": "goals",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -400,12 +384,8 @@
           "name": "incomes_month_id_months_id_fk",
           "tableFrom": "incomes",
           "tableTo": "months",
-          "columnsFrom": [
-            "month_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["month_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -517,12 +497,8 @@
           "name": "months_user_id_users_id_fk",
           "tableFrom": "months",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -607,12 +583,8 @@
           "name": "sections_month_id_months_id_fk",
           "tableFrom": "sections",
           "tableTo": "months",
-          "columnsFrom": [
-            "month_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["month_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -714,12 +686,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -791,12 +759,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -806,9 +770,7 @@
         "sessions_token_unique": {
           "name": "sessions_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -872,9 +834,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -937,20 +897,12 @@
     "public.expense_status": {
       "name": "expense_status",
       "schema": "public",
-      "values": [
-        "planned",
-        "paid"
-      ]
+      "values": ["planned", "paid"]
     },
     "public.section_type": {
       "name": "section_type",
       "schema": "public",
-      "values": [
-        "charges",
-        "epargne",
-        "loisirs",
-        "custom"
-      ]
+      "values": ["charges", "epargne", "loisirs", "custom"]
     }
   },
   "schemas": {},

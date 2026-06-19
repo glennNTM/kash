@@ -21,6 +21,30 @@ Un ebook « méthode 50/30/20 » est vendu sur Chariow (plateforme externe). La 
 
 ---
 
+## État d'avancement (au 18 juin 2026)
+
+> Section vivante : reflète ce qui est réellement en place dans le repo, pas la cible.
+
+**Backend — quasi complet**
+- Base migrée de Supabase vers **Neon** (Postgres serverless). Driver `postgres-js`, `{ prepare: false }`.
+- Schéma Drizzle complet pour les 6 ressources + tables Better Auth. 1 migration appliquée (`drizzle/0000_loving_wolf_cub.sql`).
+- CRUD complet en couches (`controllers / services / routes / validators zod / docs swagger`) pour months, incomes, sections, expenses, goals, goal-contributions.
+- Auth **Better Auth** (credentials + Google OAuth, sessions), middlewares `auth / validate / error`, vérif d'ownership.
+- Sécurité **Arcjet** branchée (rate limit + bots) ; doc Swagger exposée.
+
+**Frontend — en cours**
+- Landing + Login en place. `DashboardLayout` + sidebar (collapse via Zustand).
+- **Dashboard câblé à l'API** : `lib/api-client.ts`, `api/dashboard.ts`, `api/mappers.ts`, `lib/errors.ts`, + états UI (`Skeleton`, `ErrorState`, `EmptyState`, `ErrorBoundary`, `ConfirmDialog`). React Query opérationnel.
+- Pages encore en **stub** : `Onboarding`, `Historique`, `Objectifs`, `Statistiques`, `Profil`.
+
+**Reste à faire (principal)**
+- **Onboarding** (3 étapes : revenus → répartition % → 1re dépense) — non implémenté.
+- Pages **`/reste`** et **`/section/:id`** — absentes (routes non créées).
+- Branchement API des pages autres que le dashboard.
+- `develop` est très en avance sur `main` : pas encore promu.
+
+---
+
 ## Stack
 
 ```
@@ -38,22 +62,23 @@ Backend   : Node + Express + TypeScript (package manager : pnpm)
 Auth      : Better Auth (adaptateur Drizzle)
 Sécurité  : Arcjet (rate limiting, protection bots, validation)
 ORM       : Drizzle ORM (driver postgres-js, schéma TypeScript, drizzle-kit pour migrations, ESM)
-Base      : Supabase (Postgres hébergé — utilisé UNIQUEMENT comme base de données,
-            pas pour son auth/storage/realtime, c'est Better Auth qui gère l'auth)
+Base      : Neon (Postgres serverless hébergé — utilisé uniquement comme base de données,
+            c'est Better Auth qui gère l'auth)
 Validation: Zod (partagée front/back autant que possible)
 ```
 
 ### Décisions de stack à respecter
 
-- **Drizzle ORM + Supabase** : Supabase n'est qu'un Postgres hébergé. Aucune utilisation de Supabase Auth,
-  Storage ou Realtime. Le schéma vit en TypeScript dans `src/db/schema/` (`auth.ts` pour les tables Better
+- **Drizzle ORM + Neon** : Neon est un Postgres serverless hébergé, utilisé uniquement comme base de
+  données. Le schéma vit en TypeScript dans `src/db/schema/` (`auth.ts` pour les tables Better
   Auth, `app.ts` pour le métier, `relations.ts` pour les relations, `index.ts` ré-exporte tout).
   Spécificités à respecter : driver `postgres-js` (paquet `postgres`) avec `{ prepare: false }` obligatoire
-  (pooler transaction Supabase 6543, pas de prepared statements) ; client Drizzle instancié dans
-  `src/db/index.ts` et exporté sous `db` ; config drizzle-kit dans `drizzle.config.ts` à la racine ;
+  (pooler Neon en mode transaction via PgBouncer, pas de prepared statements) ; client Drizzle instancié
+  dans `src/db/index.ts` et exporté sous `db` ; config drizzle-kit dans `drizzle.config.ts` à la racine ;
   ESM requis (`"type": "module"`, imports relatifs avec extension `.js`) ; IDs en `text` (Better Auth pour
-  l'auth, `cuid2` via `@paralleldrive/cuid2` pour le métier). Deux URLs : `DATABASE_URL` (pooler Supabase
-  6543, runtime) et `DIRECT_URL` (direct 5432, utilisée par drizzle-kit pour push/pull/migrate).
+  l'auth, `cuid2` via `@paralleldrive/cuid2` pour le métier). Deux URLs : `DATABASE_URL` (endpoint pooled
+  Neon, host avec `-pooler`, runtime) et `DIRECT_URL` (endpoint direct Neon, sans `-pooler`, utilisée par
+  drizzle-kit pour push/pull/migrate) ; SSL requis (`?sslmode=require`).
   Scripts : `pnpm db:generate`, `db:migrate`, `db:push`, `db:pull`, `db:studio`.
 - **Tailwind v4** : pas de `tailwind.config.ts`. Config et tokens dans `globals.css`
   (`@import "tailwindcss"` + `@theme`). Syntaxe tokens : `bg-(--bg-1)`, `text-(--accent)` (parenthèses).
@@ -76,7 +101,7 @@ Jamais npm sauf dernier recours (lenteur, failles supply-chain).
 Le frontend ne parle JAMAIS directement à la base. Flux unique :
 
 ```
-React (frontend) → API Express (backend) → Drizzle → Supabase/Postgres
+React (frontend) → API Express (backend) → Drizzle → Neon/Postgres
                          ↑
                    Better Auth (sessions) + Arcjet (protection)
 ```
@@ -173,6 +198,51 @@ goal_contributions (id, goal_id, month_id, amount)
 
 ---
 
+## Tests
+
+> Objectif : pas de couverture à 100 %, mais garantir que les **unités clés** et les
+> **workflows fonctionnels** se comportent comme prévu. On teste la logique métier et les
+> contrats, pas le décoratif.
+
+### Stack
+
+```
+Frontend : Vitest + React Testing Library (jsdom) + @testing-library/user-event
+Backend  : Vitest + Supertest
+```
+
+### Emplacement et conventions
+
+- Les tests sont **centralisés** dans un dossier `tests/` dédié à chaque app — jamais co-localisés à côté du code source.
+  - `frontend/tests/` → `unit/`, `components/`, `hooks/` + `setup.ts`
+  - `backend/tests/` → `unit/`, `integration/` + `setup.ts`
+- Nommage : `*.test.ts` (ou `*.test.tsx` pour les composants). Découverte cantonnée à `tests/**` via `vitest.config.ts`.
+- Imports vers le code source en chemins relatifs (`../../src/...`). Côté backend, garder l'extension `.js` (ESM/NodeNext).
+
+### Stratégie
+
+- **Unités pures d'abord** (le gros de la valeur, zéro infra) :
+  - Front : `mappers`, `formatAmount`/`formatPercent`, `computeStats`, schémas Zod d'onboarding.
+  - Back : validators Zod (somme % = 100, part ≥ 10 %, bornes), `parseId`, classes d'erreurs.
+- **Intégration backend = db mické** : pas de vraie base. On mocke le module `db` (services) et
+  le middleware `requireAuth` (session injectée), puis on teste le contrat route ↔ validation ↔
+  controller avec Supertest. Le vrai SQL/transactions n'est volontairement pas couvert.
+  - `NODE_ENV=test` (posé dans `tests/setup.ts`) court-circuite Arcjet → aucun appel réseau.
+  - L'app Express est exportée sans `listen` depuis `src/app.ts` (le `listen` vit dans `src/index.ts`).
+- **Front composant/hook** : RTL pour les comportements clés (rendu conditionnel, interactions),
+  hooks React Query montés dans un `QueryClientProvider` avec la couche API mockée. Pas d'exhaustivité.
+
+### Commandes
+
+```
+# Frontend (bun)            # Backend (pnpm)
+bun run test                pnpm test          # run unique (CI)
+bun run test:watch          pnpm test:watch    # mode watch
+bun run test:cov            pnpm test:cov      # avec couverture
+```
+
+---
+
 ## Comment je veux que tu m'aides
 
 - Je code moi-même. Tu es un assistant, pas un exécutant : propose, explique, challenge mes choix si besoin.
@@ -194,4 +264,4 @@ goal_contributions (id, goal_id, month_id, amount)
 
 ---
 
-*Kash · CLAUDE.md v3.3 · PERN · Drizzle ORM + Supabase · Juin 2026*
+*Kash · CLAUDE.md v3.6 · PERN · Drizzle ORM + Neon · Juin 2026*

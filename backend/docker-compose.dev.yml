@@ -1,0 +1,17 @@
+# Dev : hot reload (tsx watch) avec la source montée en volume.
+# La base reste Neon (DATABASE_URL dans .env) — pas de Postgres local.
+services:
+  api:
+    build:
+      context: .
+      target: dev
+    env_file: .env
+    environment:
+      - NODE_ENV=development
+    ports:
+      - '8000:8000'
+      - '10000:10000' # documentation Swagger
+    volumes:
+      # On ne monte que la source : node_modules reste celui (Linux) de l'image.
+      - ./src:/app/src
+      - ./tsconfig.json:/app/tsconfig.json

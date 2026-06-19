@@ -1,8 +1,8 @@
-import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { db } from '../db/index.js';
-import * as schema from '../db/schema/index.js';
-import { env } from '../config/env.js';
+import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { db } from '../db/index.js'
+import * as schema from '../db/schema/index.js'
+import { env } from '../config/env.js'
 
 // Le provider Google n'est activé que si les deux secrets sont présents,
 // pour ne pas bloquer le dev email/password tant que l'OAuth n'est pas configuré.
@@ -17,7 +17,7 @@ const googleProvider =
           prompt: 'select_account consent' as const,
         },
       }
-    : undefined;
+    : undefined
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -30,6 +30,7 @@ export const auth = betterAuth({
     usePlural: true,
     schema,
   }),
+
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
@@ -47,4 +48,4 @@ export const auth = betterAuth({
     },
   },
   ...(googleProvider ? { socialProviders: googleProvider } : {}),
-});
+})

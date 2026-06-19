@@ -14,7 +14,9 @@ const PG_FK_VIOLATION = '23503'
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   // Validation Zod → 400
   if (err instanceof ZodError) {
-    res.status(400).json({ error: err.issues[0]?.message ?? 'Données invalides.' })
+    res
+      .status(400)
+      .json({ error: err.issues[0]?.message ?? 'Données invalides.' })
     return
   }
 
@@ -32,7 +34,9 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
       return
     }
     if (code === PG_FK_VIOLATION) {
-      res.status(400).json({ error: 'Référence invalide vers une ressource liée.' })
+      res
+        .status(400)
+        .json({ error: 'Référence invalide vers une ressource liée.' })
       return
     }
   }

@@ -6,6 +6,7 @@ import { Star, Check, Trash2, Pencil, Plus, ChevronDown, ChevronUp } from '../..
 import toast from 'react-hot-toast'
 import * as RadixDialog from '@radix-ui/react-dialog'
 import { DialogContent } from '../ui/Dialog'
+import ConfirmDialog from '../ui/ConfirmDialog'
 import ProgressBar from './ProgressBar'
 import { formatAmount, formatPercent } from '../../lib/format'
 import { useAddExpense, useToggleRecurring, useDeleteExpense } from '../../hooks/useDashboard'
@@ -41,6 +42,7 @@ export default function SectionDetailModal({
   onRename,
 }: SectionDetailModalProps) {
   const [showForm, setShowForm] = useState(false)
+  const [pendingDelete, setPendingDelete] = useState<{ id: number; label: string } | null>(null)
 
   const addExpense = useAddExpense(year, month)
   const toggleRecurring = useToggleRecurring(year, month)
@@ -94,15 +96,17 @@ export default function SectionDetailModal({
     setShowForm(false)
   }
 
-  async function handleToggleRecurring(expenseId: string) {
-    const res = await toggleRecurring.mutateAsync(expenseId)
+  async function handleToggleRecurring(expenseId: number, isRecurring: boolean) {
+    const res = await toggleRecurring.mutateAsync({ expenseId, isRecurring })
     if ('error' in res) toast.error(res.error)
   }
 
-  async function handleDelete(expenseId: string) {
-    const res = await deleteExpense.mutateAsync(expenseId)
+  async function confirmDelete() {
+    if (!pendingDelete) return
+    const res = await deleteExpense.mutateAsync(pendingDelete.id)
     if ('error' in res) toast.error(res.error)
     else toast.success('Dépense supprimée')
+    setPendingDelete(null)
   }
 
   const paid = section.expenses.filter((e) => e.status === 'paid')
@@ -196,7 +200,7 @@ export default function SectionDetailModal({
                 {/* Étoile récurrence */}
                 <button
                   type="button"
-                  onClick={() => handleToggleRecurring(expense.id)}
+                  onClick={() => handleToggleRecurring(expense.id, !expense.isRecurring)}
                   aria-label={expense.isRecurring ? 'Retirer des récurrentes' : 'Répéter le mois prochain'}
                   className="shrink-0 transition-transform duration-(--duration-fast) active:scale-90"
                 >
@@ -211,7 +215,7 @@ export default function SectionDetailModal({
                 {/* Supprimer */}
                 <button
                   type="button"
-                  onClick={() => handleDelete(expense.id)}
+                  onClick={() => setPendingDelete({ id: expense.id, label: expense.label })}
                   aria-label="Supprimer la dépense"
                   className="shrink-0 text-(--t-3) transition-colors duration-(--duration-fast) hover:text-(--error) active:scale-90"
                 >
@@ -324,6 +328,17 @@ export default function SectionDetailModal({
           )}
         </div>
       </DialogContent>
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        onOpenChange={(o) => { if (!o) setPendingDelete(null) }}
+        title="Supprimer cette dépense ?"
+        description={`« ${pendingDelete?.label ?? ''} » sera définitivement supprimée. Cette action est irréversible.`}
+        confirmLabel="Supprimer"
+        onConfirm={confirmDelete}
+        loading={deleteExpense.isPending}
+        danger
+      />
     </RadixDialog.Root>
   )
 }

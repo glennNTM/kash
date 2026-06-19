@@ -1,0 +1,11 @@
+# Généré / installé : ne pas reformater
+node_modules
+dist
+coverage
+pnpm-lock.yaml
+
+# Migrations générées par drizzle-kit
+drizzle
+
+# Documentation
+*.md

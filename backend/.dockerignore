@@ -1,0 +1,23 @@
+# Dépendances et artefacts (réinstallés/recompilés dans l'image)
+node_modules
+dist
+
+# Secrets et variables d'environnement (injectés au runtime, jamais dans l'image)
+.env
+.env.*
+
+# Tests, doc et outillage local : inutiles à l'exécution
+tests
+coverage
+*.md
+.vscode
+
+# Docker et Git
+Dockerfile
+.dockerignore
+docker-compose*.yml
+.git
+.gitignore
+
+# Migrations drizzle (exécutées hors conteneur via pnpm db:migrate)
+drizzle
