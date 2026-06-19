@@ -58,11 +58,13 @@ export default function Dashboard() {
         >
           Tableau de bord
         </h1>
-        <MonthSelector
-          year={year}
-          month={month}
-          onChange={(y, m) => { setYear(y); setMonth(m) }}
-        />
+        <div className="flex items-center gap-2">
+          <MonthSelector
+            year={year}
+            month={month}
+            onChange={(y, m) => { setYear(y); setMonth(m) }}
+          />
+        </div>
       </div>
 
       {/* Chargement : squelette « formé » de toute la page */}

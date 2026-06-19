@@ -31,6 +31,13 @@ export const auth = betterAuth({
     schema,
   }),
 
+  // Session glissante de 30 jours : expire après 30 jours sans activité,
+  // et son échéance est repoussée au plus une fois par jour d'activité.
+  session: {
+    expiresIn: 60 * 60 * 24 * 30, // 30 jours
+    updateAge: 60 * 60 * 24, // rafraîchie une fois par jour
+  },
+
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
