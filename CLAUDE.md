@@ -198,6 +198,51 @@ goal_contributions (id, goal_id, month_id, amount)
 
 ---
 
+## Tests
+
+> Objectif : pas de couverture à 100 %, mais garantir que les **unités clés** et les
+> **workflows fonctionnels** se comportent comme prévu. On teste la logique métier et les
+> contrats, pas le décoratif.
+
+### Stack
+
+```
+Frontend : Vitest + React Testing Library (jsdom) + @testing-library/user-event
+Backend  : Vitest + Supertest
+```
+
+### Emplacement et conventions
+
+- Les tests sont **centralisés** dans un dossier `tests/` dédié à chaque app — jamais co-localisés à côté du code source.
+  - `frontend/tests/` → `unit/`, `components/`, `hooks/` + `setup.ts`
+  - `backend/tests/` → `unit/`, `integration/` + `setup.ts`
+- Nommage : `*.test.ts` (ou `*.test.tsx` pour les composants). Découverte cantonnée à `tests/**` via `vitest.config.ts`.
+- Imports vers le code source en chemins relatifs (`../../src/...`). Côté backend, garder l'extension `.js` (ESM/NodeNext).
+
+### Stratégie
+
+- **Unités pures d'abord** (le gros de la valeur, zéro infra) :
+  - Front : `mappers`, `formatAmount`/`formatPercent`, `computeStats`, schémas Zod d'onboarding.
+  - Back : validators Zod (somme % = 100, part ≥ 10 %, bornes), `parseId`, classes d'erreurs.
+- **Intégration backend = db mické** : pas de vraie base. On mocke le module `db` (services) et
+  le middleware `requireAuth` (session injectée), puis on teste le contrat route ↔ validation ↔
+  controller avec Supertest. Le vrai SQL/transactions n'est volontairement pas couvert.
+  - `NODE_ENV=test` (posé dans `tests/setup.ts`) court-circuite Arcjet → aucun appel réseau.
+  - L'app Express est exportée sans `listen` depuis `src/app.ts` (le `listen` vit dans `src/index.ts`).
+- **Front composant/hook** : RTL pour les comportements clés (rendu conditionnel, interactions),
+  hooks React Query montés dans un `QueryClientProvider` avec la couche API mockée. Pas d'exhaustivité.
+
+### Commandes
+
+```
+# Frontend (bun)            # Backend (pnpm)
+bun run test                pnpm test          # run unique (CI)
+bun run test:watch          pnpm test:watch    # mode watch
+bun run test:cov            pnpm test:cov      # avec couverture
+```
+
+---
+
 ## Comment je veux que tu m'aides
 
 - Je code moi-même. Tu es un assistant, pas un exécutant : propose, explique, challenge mes choix si besoin.
@@ -219,4 +264,4 @@ goal_contributions (id, goal_id, month_id, amount)
 
 ---
 
-*Kash · CLAUDE.md v3.5 · PERN · Drizzle ORM + Neon · Juin 2026*
+*Kash · CLAUDE.md v3.6 · PERN · Drizzle ORM + Neon · Juin 2026*
