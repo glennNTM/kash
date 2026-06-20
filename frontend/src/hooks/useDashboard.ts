@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getMonth,
+  getAllMonthsWithDetails,
   computeStats,
   createMonthWithDefaults,
   addExpense,
@@ -20,6 +21,18 @@ export function useDashboard(year: number, month: number) {
       // null = aucun budget pour cette période (404) → pas une erreur, un état vide.
       if (res.data === null) return { month: null, stats: null }
       return { month: res.data, stats: computeStats(res.data) }
+    },
+  })
+}
+
+// Tous les mois détaillés de l'utilisateur — base des tendances globales (cross-mois).
+export function useAllMonths() {
+  return useQuery({
+    queryKey: ['months', 'all-details'],
+    queryFn: async () => {
+      const res = await getAllMonthsWithDetails()
+      if ('error' in res) throw new Error(res.error)
+      return res.data
     },
   })
 }
