@@ -5,12 +5,9 @@ interface ProgressBarProps {
 export default function ProgressBar({ ratio }: ProgressBarProps) {
   const pct = Math.min(ratio * 100, 100)
 
-  const fillColor =
-    ratio > 1
-      ? 'var(--error)'
-      : ratio > 0.8
-        ? 'var(--warning)'
-        : 'var(--accent)'
+  // Dépassement (> 100 %) en rouge ; jusqu'à 100 % inclus en accent (pas d'alerte
+  // intermédiaire : atteindre l'alloué est un état normal, pas un avertissement).
+  const fillColor = ratio > 1 ? 'var(--error)' : 'var(--accent)'
 
   return (
     <div

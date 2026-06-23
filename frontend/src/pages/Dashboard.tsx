@@ -6,7 +6,6 @@ import SectionGrid from '../components/dashboard/SectionGrid'
 import SectionDetailModal from '../components/dashboard/SectionDetailModal'
 import AdjustPercentagesModal from '../components/dashboard/AdjustPercentagesModal'
 import RenameSectionModal from '../components/dashboard/RenameSectionModal'
-import StatsPreviewCard from '../components/dashboard/StatsPreviewCard'
 import RecentExpensesTable from '../components/dashboard/RecentExpensesTable'
 import DashboardSkeleton from '../components/dashboard/DashboardSkeleton'
 import ErrorState from '../components/ui/ErrorState'
@@ -84,15 +83,13 @@ export default function Dashboard() {
         />
       )}
 
-      {/* Hero + Stats preview côte à côte */}
+      {/* En-tête : tendance de paiement + solde + répartition */}
       {monthData && stats && (
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-4 items-stretch">
-          <HeroCard stats={stats} />
-          <StatsPreviewCard
-            stats={stats}
-            sections={monthData.sections.map((s) => ({ name: s.name, percentage: s.percentage }))}
-          />
-        </div>
+        <HeroCard
+          month={monthData}
+          stats={stats}
+          onAdjust={() => setAdjustModalOpen(true)}
+        />
       )}
 
       {/* Sections */}

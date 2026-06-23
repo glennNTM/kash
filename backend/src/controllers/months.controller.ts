@@ -9,12 +9,16 @@ import type {
 
 /**
  * @route   GET /api/months
- * @desc    Récupère tous les mois de l'utilisateur connecté
+ * @desc    Récupère tous les mois de l'utilisateur connecté. Avec ?details=true,
+ *          inclut les sections et dépenses imbriquées (vues globales / tendances).
  * @access  Authentifié
  */
-export async function getAll(_req: Request, res: Response): Promise<void> {
+export async function getAll(req: Request, res: Response): Promise<void> {
   const userId = res.locals['userId'] as string
-  const data = await monthsService.findAll(userId)
+  const data =
+    req.query['details'] === 'true'
+      ? await monthsService.findAllWithDetails(userId)
+      : await monthsService.findAll(userId)
   res.status(200).json({ data })
 }
 

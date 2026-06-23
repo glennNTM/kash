@@ -5,10 +5,6 @@ import { Toaster } from 'react-hot-toast'
 import './index.css'
 import App from './App.tsx'
 import ErrorBoundary from './components/ui/ErrorBoundary.tsx'
-import { initTheme } from './stores/themeStore.ts'
-
-// Applique le thème (persisté ou préférence OS) avant le rendu de l'app.
-initTheme()
 
 const queryClient = new QueryClient({
   defaultOptions: {
