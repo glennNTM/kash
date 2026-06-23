@@ -125,10 +125,12 @@ body {
   -moz-osx-font-smoothing : grayscale;
 }
 
-/* Évite le scroll horizontal accidentel */
+/* Évite le scroll horizontal accidentel.
+   `clip` (et pas `hidden`) : pas de conteneur de défilement créé,
+   donc `position: sticky` (header de la landing) continue de fonctionner. */
 html,
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* ── TYPOGRAPHIE DE BASE ────────────────────────────────*/
