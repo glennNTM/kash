@@ -1,4 +1,4 @@
-import LandingNavbar from '../components/landing/LandingNavbar'
+import SiteHeader from '../components/layout/Header'
 import LandingHero from '../components/landing/LandingHero'
 import LandingProblem from '../components/landing/LandingProblem'
 import LandingSteps from '../components/landing/LandingSteps'
@@ -12,7 +12,7 @@ import LandingFooter from '../components/landing/LandingFooter'
 export default function LandingPage() {
   return (
     <div className="min-h-dvh flex flex-col bg-(--bg-1)">
-      <LandingNavbar />
+      <SiteHeader />
       <main className="flex-1">
         <LandingHero />
         <LandingProblem />

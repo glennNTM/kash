@@ -66,23 +66,6 @@ export default function LandingHero() {
             Gratuit · Aucun paiement requis
           </span>
         </div>
-
-        {/* Preuve sociale légère (placeholder : avatars + remplacer par un vrai compteur) */}
-        <div className="flex items-center gap-3 pt-2">
-          <div className="flex -space-x-2">
-            {[0, 1, 2, 3].map((i) => (
-              <span
-                key={i}
-                className="size-8 rounded-full border-2 border-(--bg-1)"
-                style={{ background: 'var(--gradient-stat)', opacity: 1 - i * 0.15 }}
-                aria-hidden
-              />
-            ))}
-          </div>
-          <p className="text-(--t-2)" style={{ fontSize: 'var(--text-body-s)' }}>
-            Rejoins les premiers salariés qui reprennent le contrôle
-          </p>
-        </div>
       </div>
     </section>
   )

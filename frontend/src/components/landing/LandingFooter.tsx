@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { APP_NAME, LEGAL_LINKS, SOCIAL_LINKS } from '../../lib/constants'
+import { APP_NAME, LEGAL_LINKS } from '../../lib/constants'
 
 export default function LandingFooter() {
   return (
@@ -13,22 +13,6 @@ export default function LandingFooter() {
         >
           {APP_NAME}
         </Link>
-
-        {/* Réseaux */}
-        <nav className="flex items-center gap-5">
-          {SOCIAL_LINKS.map(({ label, href }) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-(--t-2) hover:text-(--accent) transition-colors"
-              style={{ transitionDuration: 'var(--duration-fast)' }}
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
 
         {/* Liens légaux */}
         <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">

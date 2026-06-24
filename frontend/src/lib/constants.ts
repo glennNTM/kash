@@ -50,17 +50,3 @@ export const FAQ_ITEMS = [
     a: 'Un tableur ne te prévient de rien. Kash te montre visuellement ce qu’il te reste, t’alerte quand tu approches d’un plafond, et pré-remplit tes dépenses récurrentes chaque mois.',
   },
 ] as const
-
-/**
- * PLACEHOLDERS — à remplacer par de vrais retours utilisateurs.
- * On ne fabrique pas de faux témoignages : ces entrées sont volontairement
- * génériques et servent uniquement à poser la structure du « mur d'avis ».
- */
-export const TESTIMONIALS = [
-  { name: 'Prénom N.', context: 'Salarié·e, 24 ans', quote: 'Résume ici, en une phrase, ce que Kash a changé pour toi.' },
-  { name: 'Prénom N.', context: 'Premier emploi, 23 ans', quote: 'Un retour authentique sur ton rapport à l’argent depuis Kash.' },
-  { name: 'Prénom N.', context: 'Jeune actif·ve, 27 ans', quote: 'Le déclic en visualisant enfin où part ton argent.' },
-  { name: 'Prénom N.', context: 'Salarié·e, 25 ans', quote: 'Ce que tu dirais à un·e ami·e qui hésite à se lancer.' },
-  { name: 'Prénom N.', context: 'Premier salaire, 22 ans', quote: 'La petite victoire : ton premier mois sans finir à sec.' },
-  { name: 'Prénom N.', context: 'Jeune actif·ve, 28 ans', quote: 'Pourquoi tu ne reviendrais pas en arrière maintenant.' },
-] as const
