@@ -1,4 +1,4 @@
-import { Plus, SlidersHorizontal } from '../../lib/icons'
+import { Plus } from '../../lib/icons'
 import type { Section, SectionStats } from '../../types/budget'
 import SectionCard from './SectionCard'
 
@@ -15,7 +15,6 @@ export default function SectionGrid({
   stats,
   onSectionClick,
   onAddSection,
-  onAdjustPercentages,
 }: SectionGridProps) {
   const statsById = Object.fromEntries(stats.map((s) => [s.sectionId, s]))
 
@@ -29,14 +28,6 @@ export default function SectionGrid({
         >
           Sections
         </h2>
-        <button
-          type="button"
-          onClick={onAdjustPercentages}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-(--accent) bg-(--accent-soft) transition-colors duration-(--duration-fast) hover:bg-(--accent)/15"
-        >
-          <SlidersHorizontal size={13} strokeWidth={2.5} />
-          Répartition
-        </button>
       </div>
 
       {/* Grille */}

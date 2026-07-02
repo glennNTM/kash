@@ -46,11 +46,19 @@ export interface CategoryBreakdown {
 }
 
 export function buildCategoryBreakdown(month: Month): CategoryBreakdown {
+  return buildCategoryBreakdownFromMonths([month])
+}
+
+// Variante globale : agrège les dépenses payées par catégorie sur plusieurs mois.
+// Base des tendances cross-mois (catégorie la plus dépensière sur tout l'historique).
+export function buildCategoryBreakdownFromMonths(months: Month[]): CategoryBreakdown {
   const totals = new Map<string, number>()
-  for (const e of month.sections.flatMap((s) => s.expenses)) {
-    if (e.status !== 'paid') continue
-    const key = e.category || 'Autre'
-    totals.set(key, (totals.get(key) ?? 0) + (e.amountReal ?? 0))
+  for (const month of months) {
+    for (const e of month.sections.flatMap((s) => s.expenses)) {
+      if (e.status !== 'paid') continue
+      const key = e.category || 'Autre'
+      totals.set(key, (totals.get(key) ?? 0) + (e.amountReal ?? 0))
+    }
   }
   const entries = [...totals.entries()].sort((a, b) => b[1] - a[1])
   return {

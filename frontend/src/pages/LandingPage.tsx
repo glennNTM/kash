@@ -1,23 +1,29 @@
-import SiteHeader from "../components/layout/Header";
-import SiteFooter from "../components/layout/Footer";
-import Hero from "../components/landing/Hero";
-import VideoSection from "../components/landing/VideoSection";
-import FeatureSection from "../components/landing/FeatureSection";
-import EbookSection from "../components/landing/EbookSection";
-import FinalCTA from "../components/landing/FinalCTA";
+import SiteHeader from '../components/layout/Header'
+import LandingHero from '../components/landing/LandingHero'
+import LandingProblem from '../components/landing/LandingProblem'
+import LandingSteps from '../components/landing/LandingSteps'
+import LandingVideo from '../components/landing/LandingVideo'
+import LandingStory from '../components/landing/LandingStory'
+import LandingEbook from '../components/landing/LandingEbook'
+import LandingFAQ from '../components/landing/LandingFAQ'
+import LandingCTAFinal from '../components/landing/LandingCTAFinal'
+import LandingFooter from '../components/landing/LandingFooter'
 
 export default function LandingPage() {
   return (
     <div className="min-h-dvh flex flex-col bg-(--bg-1)">
       <SiteHeader />
       <main className="flex-1">
-        <Hero />
-        <VideoSection />
-        <FeatureSection />
-        <EbookSection />
-        <FinalCTA />
+        <LandingHero />
+        <LandingProblem />
+        <LandingSteps />
+        <LandingVideo />
+        <LandingStory />
+        <LandingEbook />
+        <LandingFAQ />
+        <LandingCTAFinal />
       </main>
-      <SiteFooter />
+      <LandingFooter />
     </div>
-  );
+  )
 }

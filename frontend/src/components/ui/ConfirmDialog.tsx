@@ -8,6 +8,8 @@ interface ConfirmDialogProps {
   description: string
   confirmLabel?: string
   cancelLabel?: string
+  /** Libellé affiché sur le bouton de confirmation pendant le chargement. */
+  loadingLabel?: string
   onConfirm: () => void
   loading?: boolean
   /** Action destructive → bouton de confirmation rouge. */
@@ -25,6 +27,7 @@ export default function ConfirmDialog({
   description,
   confirmLabel = 'Confirmer',
   cancelLabel = 'Annuler',
+  loadingLabel = 'Suppression…',
   onConfirm,
   loading = false,
   danger = false,
@@ -52,7 +55,7 @@ export default function ConfirmDialog({
             className="flex-1 py-2.5 rounded-full text-sm font-semibold text-white transition-colors active:scale-97 disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ background: danger ? 'var(--error)' : 'var(--accent)' }}
           >
-            {loading ? 'Suppression…' : confirmLabel}
+            {loading ? loadingLabel : confirmLabel}
           </button>
         </div>
       </DialogContent>

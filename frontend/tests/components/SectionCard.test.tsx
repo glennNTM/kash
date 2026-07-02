@@ -30,9 +30,17 @@ describe('SectionCard', () => {
     expect(screen.getByText(/Dépassement/)).toBeInTheDocument()
   })
 
-  it("n'affiche aucune alerte sous le seuil de 0.8", () => {
-    render(<SectionCard section={section} stats={stats(0.5)} onClick={() => {}} />)
-    expect(screen.queryByText(/plafond|Dépassement/)).not.toBeInTheDocument()
+  it("affiche un message neutre (pas une alerte) quand l'alloué est atteint à 100 %", () => {
+    render(<SectionCard section={section} stats={stats(1)} onClick={() => {}} />)
+    expect(screen.getByText(/Tout le budget est dépensé/)).toBeInTheDocument()
+    expect(screen.queryByText(/Dépassement/)).not.toBeInTheDocument()
+  })
+
+  it("n'affiche aucun statut tant que l'alloué n'est pas atteint", () => {
+    render(<SectionCard section={section} stats={stats(0.85)} onClick={() => {}} />)
+    expect(
+      screen.queryByText(/Tout le budget est dépensé|Dépassement/)
+    ).not.toBeInTheDocument()
   })
 
   it('appelle onClick avec la section au clic', async () => {

@@ -43,6 +43,7 @@ export default function SectionDetailModal({
 }: SectionDetailModalProps) {
   const [showForm, setShowForm] = useState(false)
   const [pendingDelete, setPendingDelete] = useState<{ id: number; label: string } | null>(null)
+  const [pendingOverflow, setPendingOverflow] = useState<AddExpenseForm | null>(null)
 
   const addExpense = useAddExpense(year, month)
   const toggleRecurring = useToggleRecurring(year, month)
@@ -60,7 +61,15 @@ export default function SectionDetailModal({
 
   if (!section || !stats) return null
 
-  async function onSubmit(values: AddExpenseForm) {
+  const paid = section.expenses.filter((e) => e.status === 'paid')
+  const planned = section.expenses.filter((e) => e.status === 'planned')
+  const allExpenses = [...paid, ...planned]
+  const plannedTotal = planned.reduce((s, e) => s + e.amountPlanned, 0)
+  // Engagé = dépensé (payé) + planifié : c'est ce total qui ne doit pas franchir l'alloué.
+  const engaged = stats.spent + plannedTotal
+
+  // Persiste réellement la dépense puis informe selon le dépensé (payé) résultant.
+  async function persistExpense(values: AddExpenseForm) {
     const res = await addExpense.mutateAsync({
       sectionId: section!.id,
       expense: {
@@ -80,20 +89,33 @@ export default function SectionDetailModal({
     }
 
     const newSpent = stats!.spent + (values.status === 'paid' ? values.amountPlanned : 0)
-    const newRatio = stats!.allocated > 0 ? newSpent / stats!.allocated : 0
-    if (newRatio > 1) {
+    if (stats!.allocated > 0 && newSpent > stats!.allocated) {
       toast.error(`Dépassement sur "${section!.name}" !`)
-    } else if (newRatio > 0.8) {
-      toast(`Budget "${section!.name}" à ${Math.round(newRatio * 100)} %`, {
-        icon: '⚠️',
-        style: { color: 'var(--warning)' },
-      })
+    } else if (stats!.allocated > 0 && newSpent === stats!.allocated) {
+      // Atteindre l'alloué n'est pas une alerte : message neutre, pas de couleur warning.
+      toast(`Tout le budget de "${section!.name}" est dépensé`, { icon: '✅' })
     } else {
       toast.success('Dépense ajoutée')
     }
 
     reset()
     setShowForm(false)
+  }
+
+  // Avant d'ajouter : si l'engagé (payé + planifié) franchirait l'alloué, on demande
+  // confirmation explicite plutôt que de laisser filer le dépassement.
+  async function onSubmit(values: AddExpenseForm) {
+    if (stats!.allocated > 0 && engaged + values.amountPlanned > stats!.allocated) {
+      setPendingOverflow(values)
+      return
+    }
+    await persistExpense(values)
+  }
+
+  async function confirmOverflow() {
+    if (!pendingOverflow) return
+    await persistExpense(pendingOverflow)
+    setPendingOverflow(null)
   }
 
   async function handleToggleRecurring(expenseId: number, isRecurring: boolean) {
@@ -108,11 +130,6 @@ export default function SectionDetailModal({
     else toast.success('Dépense supprimée')
     setPendingDelete(null)
   }
-
-  const paid = section.expenses.filter((e) => e.status === 'paid')
-  const planned = section.expenses.filter((e) => e.status === 'planned')
-  const allExpenses = [...paid, ...planned]
-  const plannedTotal = planned.reduce((s, e) => s + e.amountPlanned, 0)
 
   return (
     <RadixDialog.Root
@@ -338,6 +355,21 @@ export default function SectionDetailModal({
         onConfirm={confirmDelete}
         loading={deleteExpense.isPending}
         danger
+      />
+
+      <ConfirmDialog
+        open={!!pendingOverflow}
+        onOpenChange={(o) => { if (!o) setPendingOverflow(null) }}
+        title="Dépasser le budget alloué ?"
+        description={
+          pendingOverflow
+            ? `En ajoutant « ${pendingOverflow.label} » (${formatAmount(pendingOverflow.amountPlanned)}), tu engages ${formatAmount(engaged + pendingOverflow.amountPlanned)} sur les ${formatAmount(stats.allocated)} alloués à « ${section.name} ». Tu vas dépasser ce budget. Veux-tu vraiment continuer ?`
+            : ''
+        }
+        confirmLabel="Dépasser quand même"
+        loadingLabel="Ajout…"
+        onConfirm={confirmOverflow}
+        loading={addExpense.isPending}
       />
     </RadixDialog.Root>
   )

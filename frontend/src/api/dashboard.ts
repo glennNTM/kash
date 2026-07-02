@@ -33,6 +33,15 @@ export async function getMonth(
   }
 }
 
+// Tous les mois de l'utilisateur avec sections + dépenses imbriquées.
+// Sert les tendances globales (agrégation cross-mois) en une seule requête.
+export async function getAllMonthsWithDetails(): Promise<Result<Month[]>> {
+  return safe(async () => {
+    const dtos = await apiRequest<MonthDTO[]>('/api/months?details=true')
+    return dtos.map(mapMonth)
+  })
+}
+
 // Crée le budget du mois avec la répartition par défaut 50/30/20 (revenu à 0, à renseigner ensuite).
 export async function createMonthWithDefaults(year: number, month: number): Promise<Result<true>> {
   return safe(async () => {
