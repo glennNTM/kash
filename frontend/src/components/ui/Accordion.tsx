@@ -37,7 +37,7 @@ export function AccordionTrigger({
     <AccordionPrimitive.Header>
       <AccordionPrimitive.Trigger
         className="group flex w-full items-center justify-between gap-4 py-5 text-left text-(--t-1) font-semibold transition-colors hover:text-(--accent)"
-        style={{ fontSize: 'var(--text-body-l)' }}
+        style={{ fontSize: 'var(--text-heading-m)' }}
         {...props}
       >
         {children}
@@ -60,7 +60,7 @@ export function AccordionContent({
     <AccordionPrimitive.Content className="overflow-hidden">
       <div
         className="pb-5 pr-8 text-(--t-2)"
-        style={{ fontSize: 'var(--text-body)', lineHeight: '1.65' }}
+        style={{ fontSize: 'var(--text-body-l)', lineHeight: '1.7' }}
       >
         {children}
       </div>

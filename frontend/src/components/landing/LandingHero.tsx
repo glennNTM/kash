@@ -10,12 +10,12 @@ const BENEFITS = [
 
 export default function LandingHero() {
   return (
-    <section className="pt-16 pb-20 md:pt-24 md:pb-28 bg-(--bg-1)">
-      <div className="max-w-3xl mx-auto px-6 flex flex-col items-center text-center gap-7">
+    <section className="pt-10 pb-8 md:pt-14 md:pb-10 bg-(--bg-1)">
+      <div className="max-w-3xl mx-auto px-6 flex flex-col items-center text-center gap-6">
         {/* H1 — le résultat désiré, pas l'outil */}
         <h1
-          className="font-display font-bold text-(--t-1)"
-          style={{ fontSize: 'clamp(52px, 9vw, 96px)', lineHeight: '1.05' }}
+          className="font-display font-bold text-(--t-1) whitespace-nowrap"
+          style={{ fontSize: 'clamp(28px, 6vw, 82px)', lineHeight: '1.05' }}
         >
           Arrête de finir tes mois{' '}
           <span
