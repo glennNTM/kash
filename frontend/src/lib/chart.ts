@@ -41,7 +41,7 @@ ChartJS.register(
   Filler
 )
 
-// Lit un token CSS sur <html> (respecte le thème light/dark), avec repli.
+// Lit un token CSS sur <html>, avec repli si indisponible (SSR / token absent).
 function cssVar(name: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback
   const value = getComputedStyle(document.documentElement)
@@ -50,7 +50,7 @@ function cssVar(name: string, fallback: string): string {
   return value || fallback
 }
 
-// Palette catégorielle multi-teintes (distincte, lisible en thème clair/sombre).
+// Palette catégorielle multi-teintes (distincte, lisible sur fond clair).
 // L'accent vert ouvre la série (cohérence de marque), puis des teintes variées.
 const CHART_PALETTE = [
   '#1A9E6E', // vert accent
@@ -81,7 +81,6 @@ export interface ChartPalette {
 /**
  * Résout la palette des graphes à partir des tokens CSS. Le canvas ne sait pas
  * interpréter `var(--token)` : on convertit donc en valeurs concrètes au runtime.
- * Respecte le thème actif ; non réactif à un changement de thème à chaud.
  */
 export function resolveChartColors(): ChartPalette {
   const accent = cssVar('--accent', '#1A9E6E')

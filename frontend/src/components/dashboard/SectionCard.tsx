@@ -10,20 +10,17 @@ interface SectionCardProps {
 
 const STATUS_LABEL: Record<string, string> = {
   normal: '',
-  warning: '⚠ Proche du plafond',
-  over: '⚠ Dépassement',
+  full: 'Tout le budget est dépensé',
+  over: 'Dépassement',
 }
 
 export default function SectionCard({ section, stats, onClick }: SectionCardProps) {
+  // full : alloué entièrement consommé (état normal, sans alerte). over : dépassement.
   const status =
-    stats.ratio > 1 ? 'over' : stats.ratio > 0.8 ? 'warning' : 'normal'
+    stats.ratio > 1 ? 'over' : stats.ratio >= 1 ? 'full' : 'normal'
 
   const statusColor =
-    status === 'over'
-      ? 'var(--error)'
-      : status === 'warning'
-        ? 'var(--warning)'
-        : 'var(--t-3)'
+    status === 'over' ? 'var(--error)' : 'var(--t-2)'
 
   return (
     <button
@@ -41,7 +38,7 @@ export default function SectionCard({ section, stats, onClick }: SectionCardProp
         <span
           className="shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full"
           style={{
-            background: status === 'normal' ? 'var(--bg-3)' : status === 'warning' ? 'rgba(217,119,6,0.10)' : 'rgba(220,38,38,0.10)',
+            background: status === 'over' ? 'rgba(220,38,38,0.10)' : 'var(--bg-3)',
             color: status === 'normal' ? 'var(--t-2)' : statusColor,
           }}
         >

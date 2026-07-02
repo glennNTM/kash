@@ -13,6 +13,13 @@
  *     tags: [Mois]
  *     security:
  *       - cookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: details
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *         description: Si true, inclut les sections et dépenses imbriquées (vues globales / tendances)
  *     responses:
  *       200:
  *         description: Liste des mois (triés du plus récent au plus ancien)

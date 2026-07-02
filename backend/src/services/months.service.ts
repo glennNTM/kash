@@ -22,6 +22,27 @@ export async function findAll(userId: string): Promise<Month[]> {
     .orderBy(desc(months.year), desc(months.month))
 }
 
+// Comme findAll, mais avec sections + dépenses imbriquées. Sert les vues globales
+// (tendances cross-mois) qui agrègent l'historique complet en une seule requête.
+export async function findAllWithDetails(
+  userId: string
+): Promise<MonthWithDetails[]> {
+  return db.query.months.findMany({
+    where: eq(months.userId, userId),
+    orderBy: (m, { desc: d }) => [d(m.year), d(m.month)],
+    with: {
+      sections: {
+        orderBy: (s, { asc }) => [asc(s.sortOrder)],
+        with: {
+          expenses: {
+            orderBy: (e, { asc }) => [asc(e.sortOrder)],
+          },
+        },
+      },
+    },
+  })
+}
+
 // Récupère le mois (année + mois) de l'utilisateur avec ses sections et dépenses imbriquées.
 // Sert le dashboard en une seule requête. Renvoie null si aucun budget pour cette période.
 export async function findByDateWithDetails(
