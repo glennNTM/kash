@@ -1,5 +1,6 @@
 import SiteHeader from '../components/layout/Header'
 import LandingHero from '../components/landing/LandingHero'
+import LandingShowcase from '../components/landing/LandingShowcase'
 import LandingProblem from '../components/landing/LandingProblem'
 import LandingSteps from '../components/landing/LandingSteps'
 import LandingVideo from '../components/landing/LandingVideo'
@@ -15,6 +16,7 @@ export default function LandingPage() {
       <SiteHeader />
       <main className="flex-1">
         <LandingHero />
+        <LandingShowcase />
         <LandingProblem />
         <LandingSteps />
         <LandingVideo />

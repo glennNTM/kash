@@ -22,7 +22,7 @@ export default function LandingFAQ() {
         <Accordion type="single" collapsible className="border-t border-(--border-subtle)">
           {FAQ_ITEMS.map((item, i) => (
             <AccordionItem key={i} value={`faq-${i}`}>
-              <AccordionTrigger>{item.q}</AccordionTrigger>
+              <AccordionTrigger >{item.q}</AccordionTrigger>
               <AccordionContent>{item.a}</AccordionContent>
             </AccordionItem>
           ))}

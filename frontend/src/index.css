@@ -216,5 +216,11 @@ select {
   border-radius   : var(--radius-md);
 }
 
+/* ── FADE-UP (entrée douce d'un bloc) ───────────────────*/
+@keyframes kash-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
 } /* fin @layer base */
 
