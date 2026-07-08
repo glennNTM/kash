@@ -1,4 +1,4 @@
-# CLAUDE.md — Kash
+d# CLAUDE.md — Kash
 
 > Contexte et contraintes du projet, à charge pour l'assistant de s'y référer.
 > Je code moi-même. Ce fichier sert à t'aligner quand je demande de l'aide sur une feature,
@@ -21,27 +21,34 @@ Un ebook « méthode 50/30/20 » est vendu sur Chariow (plateforme externe). La 
 
 ---
 
-## État d'avancement (au 18 juin 2026)
+## État d'avancement (au 3 juillet 2026)
 
 > Section vivante : reflète ce qui est réellement en place dans le repo, pas la cible.
 
 **Backend — quasi complet**
 - Base migrée de Supabase vers **Neon** (Postgres serverless). Driver `postgres-js`, `{ prepare: false }`.
 - Schéma Drizzle complet pour les 6 ressources + tables Better Auth. 1 migration appliquée (`drizzle/0000_loving_wolf_cub.sql`).
-- CRUD complet en couches (`controllers / services / routes / validators zod / docs swagger`) pour months, incomes, sections, expenses, goals, goal-contributions.
+- CRUD complet en couches (`controllers / services / routes / validators zod / docs swagger`) pour months, incomes, sections, expenses, goals, goal-contributions. API months enrichie (sections + dépenses détaillées).
 - Auth **Better Auth** (credentials + Google OAuth, sessions), middlewares `auth / validate / error`, vérif d'ownership.
 - Sécurité **Arcjet** branchée (rate limit + bots) ; doc Swagger exposée.
+- **Dockerisé** (`Dockerfile`, `docker-compose.dev.yml` / `.prod.yml`) + **pipelines CI** (`.github/workflows/ci.yml`, `lint.yml`).
+- **Tests** en place (Vitest + Supertest) : `tests/unit/` + `tests/integration/`.
 
-**Frontend — en cours**
-- Landing + Login en place. `DashboardLayout` + sidebar (collapse via Zustand).
-- **Dashboard câblé à l'API** : `lib/api-client.ts`, `api/dashboard.ts`, `api/mappers.ts`, `lib/errors.ts`, + états UI (`Skeleton`, `ErrorState`, `EmptyState`, `ErrorBoundary`, `ConfirmDialog`). React Query opérationnel.
-- Pages encore en **stub** : `Onboarding`, `Historique`, `Objectifs`, `Statistiques`, `Profil`.
+**Frontend — bien avancé**
+- **Landing** refondue orientée conversion (Hero, Problem, Story, Showcase, Steps, Ebook, FAQ, CTA final, Video). Login/Register en place.
+- **Onboarding** implémenté : 3 étapes (`StepIncome` → `StepAllocation` → `StepFirstExpense`) + `OnboardingLayout`. Garde d'accès via `OnboardingGate` (`RequireBudget` / `RequireNoBudget`).
+- `DashboardLayout` + sidebar (collapse via Zustand). **Dashboard câblé à l'API** : `lib/api-client.ts`, `api/dashboard.ts`, `api/mappers.ts`, `lib/errors.ts`, + états UI (`Skeleton`, `ErrorState`, `EmptyState`, `ErrorBoundary`, `ConfirmDialog`). React Query opérationnel.
+- Dashboard refondu : `HeroCard`, `BalanceCard`, `SectionGrid` / `SectionCard`, `SectionDetailModal`, `AdjustPercentagesModal`, `RenameSectionModal`, `RecentExpensesTable`, `StatsPreviewCard`, `PaymentTrendCard`.
+- **Statistiques** implémentées (Chart.js) : `CategoryPieChart`, `SectionRadarChart`, `SectionStackedBarChart`, `SpendingLineChart`.
+- **Profil** : UI en place (session, déconnexion).
+- **Tests** front (Vitest + RTL) en place.
 
 **Reste à faire (principal)**
-- **Onboarding** (3 étapes : revenus → répartition % → 1re dépense) — non implémenté.
-- Pages **`/reste`** et **`/section/:id`** — absentes (routes non créées).
-- Branchement API des pages autres que le dashboard.
-- `develop` est très en avance sur `main` : pas encore promu.
+- Pages encore en **stub** : `Historique`, `Objectifs` (EmptyState uniquement, pas de branchement API).
+- Route **`/reste`** — absente.
+- Détail de section : implémenté via **modal** (`SectionDetailModal`), pas via une route `/section/:id` (divergence assumée avec la spec plus bas).
+- Branchement API complet de `Historique`, `Objectifs`, `Profil`.
+- `develop` est en avance sur `main` : pas encore promu.
 
 ---
 
@@ -264,4 +271,4 @@ bun run test:cov            pnpm test:cov      # avec couverture
 
 ---
 
-*Kash · CLAUDE.md v3.6 · PERN · Drizzle ORM + Neon · Juin 2026*
+*Kash · CLAUDE.md v3.7 · PERN · Drizzle ORM + Neon · Juillet 2026*

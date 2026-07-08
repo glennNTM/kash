@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Wallet, PieChart, TrendingUp, Layers, ChevronLeft, ChevronRight } from '../../lib/icons'
+import BackgroundRippleEffect from '../ui/BackgroundRippleEffect'
 
 /**
  * Section « aperçu produit » : reconstitue le tableau de bord de Kash en vrai
@@ -89,8 +90,9 @@ export default function LandingShowcase() {
   const CaptionIcon = feature.icon
 
   return (
-    <section id="apercu" className="scroll-mt-20 pt-2 pb-16 md:pt-4 md:pb-24 bg-(--bg-1) overflow-hidden">
-      <div ref={revealRef} className="max-w-4xl mx-auto px-6">
+    <section id="apercu" className="relative isolate scroll-mt-20 pt-2 pb-16 md:pt-4 md:pb-24 bg-(--bg-1) overflow-hidden">
+      <BackgroundRippleEffect />
+      <div ref={revealRef} className="relative max-w-4xl mx-auto px-6">
         <div
           ref={stageRef}
           className={`relative transition-all ${

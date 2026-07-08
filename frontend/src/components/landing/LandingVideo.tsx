@@ -1,5 +1,6 @@
 import LazyVideo from '../ui/LazyVideo'
 import MicroTestimonial from './MicroTestimonial'
+import BackgroundRippleEffect from '../ui/BackgroundRippleEffect'
 
 // Assets à placer dans `frontend/public/` (webm/mp4 + poster).
 const VIDEO_SOURCES = [
@@ -10,8 +11,9 @@ const VIDEO_POSTER = '/kash-poster.jpg'
 
 export default function LandingVideo() {
   return (
-    <section id="demo" className="scroll-mt-20 py-20 md:py-28 bg-(--bg-1)">
-      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
+    <section id="demo" className="relative isolate scroll-mt-20 py-20 md:py-28 bg-(--bg-1)">
+      <BackgroundRippleEffect />
+      <div className="relative max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
         <div className="text-center mb-12">
           <h2
             className="font-display font-bold text-(--t-1) mb-4"

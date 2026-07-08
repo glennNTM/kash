@@ -1,11 +1,13 @@
 import { ArrowRight } from '../../lib/icons'
 import { CHARIOW_EBOOK_URL } from '../../lib/constants'
 import MicroTestimonial from './MicroTestimonial'
+import BackgroundRippleEffect from '../ui/BackgroundRippleEffect'
 
 export default function LandingStory() {
   return (
-    <section className="py-20 md:py-28 bg-(--bg-1)">
-      <div className="max-w-5xl mx-auto px-6 md:px-10 lg:px-16">
+    <section className="relative isolate py-20 md:py-28 bg-(--bg-1)">
+      <BackgroundRippleEffect />
+      <div className="relative max-w-5xl mx-auto px-6 md:px-10 lg:px-16">
         <div className="grid md:grid-cols-[260px_1fr] gap-10 lg:gap-14 items-center">
           {/* Photo fondateur — PLACEHOLDER (remplacer par une vraie photo souriante) */}
           <div className="flex justify-center md:justify-start">
