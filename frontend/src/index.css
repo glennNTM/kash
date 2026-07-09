@@ -216,5 +216,30 @@ select {
   border-radius   : var(--radius-md);
 }
 
+/* ── BACKGROUND RIPPLE (fond décoratif HeroCard) ────────*/
+.kash-ripple-grid {
+  background-image  : linear-gradient(var(--border-subtle) 1px, transparent 1px),
+                       linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size   : 32px 32px;
+}
+
+.kash-ripple-halo {
+  --x: 50%;
+  --y: 50%;
+  background : radial-gradient(circle at var(--x) var(--y), var(--accent-soft), transparent 60%);
+  animation  : kash-ripple-pulse 3.6s var(--ease-smooth) infinite;
+}
+
+@keyframes kash-ripple-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+/* ── FADE-UP (entrée douce d'un bloc) ───────────────────*/
+@keyframes kash-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
 } /* fin @layer base */
 

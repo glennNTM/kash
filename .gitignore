@@ -31,3 +31,5 @@ Thumbs.db
 *.swp
 .vscode/*
 !.vscode/extensions.json
+CLAUDE.md
+design-system.md

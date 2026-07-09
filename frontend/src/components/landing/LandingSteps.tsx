@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Wallet, SlidersHorizontal, BarChart3, ArrowRight } from '../../lib/icons'
 import MicroTestimonial from './MicroTestimonial'
+import BackgroundRippleEffect from '../ui/BackgroundRippleEffect'
 
 const STEPS = [
   {
@@ -25,13 +26,14 @@ export default function LandingSteps() {
     <>
       <section
         id="etapes"
-        className="scroll-mt-20 py-20 md:py-28 px-6"
+        className="relative isolate overflow-hidden scroll-mt-20 py-20 md:py-28 px-6"
         style={{
           background: 'var(--gradient-stat)',
           borderRadius: '0 0 50% 50% / 0 0 80px 80px',
         }}
       >
-        <div className="max-w-6xl mx-auto md:px-4 lg:px-10">
+        <BackgroundRippleEffect />
+        <div className="relative max-w-6xl mx-auto md:px-4 lg:px-10">
           <div className="text-center mb-14">
             <h2
               className="font-display font-bold text-white"
