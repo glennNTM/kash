@@ -1,0 +1,47 @@
+# ── kash — HTTPS. Accès : https://kash.labtools.tech ──
+#   /       -> frontend React    |   /api -> API Node (Better Auth sous /api/auth)
+# Base sur Neon (DATABASE_URL dans .env). Dockerfile backend fourni par le repo.
+services:
+  api:
+    build:
+      context: ./backend
+      target: prod
+    restart: unless-stopped
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.kash-api.rule=Host(`kash.labtools.tech`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.kash-api.entrypoints=websecure"
+      - "traefik.http.routers.kash-api.tls.certresolver=le"
+      - "traefik.http.routers.kash-api.priority=100"
+      - "traefik.http.services.kash-api.loadbalancer.server.port=8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ""            # relatif -> même origine, aucune URL gravée
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.kash-web.rule=Host(`kash.labtools.tech`)"
+      - "traefik.http.routers.kash-web.entrypoints=websecure"
+      - "traefik.http.routers.kash-web.tls.certresolver=le"
+      - "traefik.http.routers.kash-web.priority=1"
+      - "traefik.http.services.kash-web.loadbalancer.server.port=8080"
+
+networks:
+  proxy:
+    external: true
