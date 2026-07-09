@@ -22,10 +22,42 @@ export default function BackgroundRippleEffect() {
   }
 
   return (
+import { useRef, useEffect } from 'react'
+
+export default function BackgroundRippleEffect() {
+  const haloRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const parent = containerRef.current?.parentElement
+    if (!parent) return
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!haloRef.current) return
+      const bounds = parent.getBoundingClientRect()
+      const x = ((e.clientX - bounds.left) / bounds.width) * 100
+      const y = ((e.clientY - bounds.top) / bounds.height) * 100
+      haloRef.current.style.setProperty('--x', `${x}%`)
+      haloRef.current.style.setProperty('--y', `${y}%`)
+    }
+
+    parent.addEventListener('pointermove', handlePointerMove)
+    return () => parent.removeEventListener('pointermove', handlePointerMove)
+  }, [])
+
+  return (
     <div
+      ref={containerRef}
       aria-hidden
-      onPointerMove={handlePointerMove}
       className="absolute inset-0 overflow-hidden pointer-events-none"
+    >
+      {/* Grille discrète */}
+      <div className="absolute inset-0 kash-ripple-grid" />
+      {/* Halo radial qui suit le pointeur */}
+      <div ref={haloRef} className="absolute inset-0 kash-ripple-halo" />
+    </div>
+  )
+}
     >
       {/* Grille discrète */}
       <div className="absolute inset-0 kash-ripple-grid" />
