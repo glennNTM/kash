@@ -1,5 +1,6 @@
 import { X, Check } from '../../lib/icons'
 import MicroTestimonial from './MicroTestimonial'
+import BackgroundRippleEffect from '../ui/BackgroundRippleEffect'
 
 const PAIN = [
   'Tu finis le mois sans savoir où est passé ton argent',
@@ -19,8 +20,9 @@ const RELIEF = [
 
 export default function LandingProblem() {
   return (
-    <section className="py-20 md:py-28 bg-(--bg-1)">
-      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
+    <section className="relative isolate py-20 md:py-28 bg-(--bg-1)">
+      <BackgroundRippleEffect />
+      <div className="relative max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
         <h2
           className="font-display font-bold text-(--t-1) text-center mb-12 md:mb-16"
           style={{ fontSize: 'clamp(34px, 5vw, 56px)', lineHeight: '1.1' }}

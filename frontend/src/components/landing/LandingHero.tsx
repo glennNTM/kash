@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Check } from '../../lib/icons'
+import BackgroundRippleEffect from '../ui/BackgroundRippleEffect'
 
 // Bénéfices utilisateur (pas des fonctionnalités).
 const BENEFITS = [
@@ -10,8 +11,9 @@ const BENEFITS = [
 
 export default function LandingHero() {
   return (
-    <section className="pt-10 pb-8 md:pt-14 md:pb-10 bg-(--bg-1)">
-      <div className="max-w-3xl mx-auto px-6 flex flex-col items-center text-center gap-6">
+    <section className="relative isolate pt-10 pb-8 md:pt-14 md:pb-10 bg-(--bg-1)">
+      <BackgroundRippleEffect />
+      <div className="relative max-w-3xl mx-auto px-6 flex flex-col items-center text-center gap-6">
         {/* H1 — le résultat désiré, pas l'outil */}
         <h1
           className="font-display font-bold text-(--t-1) whitespace-nowrap"
