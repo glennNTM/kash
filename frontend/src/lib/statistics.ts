@@ -21,11 +21,15 @@ export interface CumulativeSeries {
 }
 
 export function buildCumulativeSpending(month: Month): CumulativeSeries {
-  const paid = month.sections
-    .flatMap((s) => s.expenses)
-    .filter((e) => e.status === 'paid' && e.paidAt)
-    .map((e) => ({ date: e.paidAt as string, amount: e.amountReal ?? 0 }))
-    .sort((a, b) => a.date.localeCompare(b.date))
+  const paid: { date: string; amount: number }[] = []
+  for (const s of month.sections) {
+    for (const e of s.expenses) {
+      if (e.status === 'paid' && e.paidAt) {
+        paid.push({ date: e.paidAt, amount: e.amountReal ?? 0 })
+      }
+    }
+  }
+  paid.sort((a, b) => a.date.localeCompare(b.date))
 
   const labels: string[] = []
   const cumulative: number[] = []

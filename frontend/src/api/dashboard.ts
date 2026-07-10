@@ -54,9 +54,11 @@ export async function createMonthWithDefaults(year: number, month: number): Prom
       { name: 'Épargne & objectifs', type: 'epargne', percentage: 0.3, sortOrder: 1 },
       { name: 'Loisirs & plaisirs', type: 'loisirs', percentage: 0.2, sortOrder: 2 },
     ] as const
-    for (const section of defaults) {
-      await apiRequest('/api/sections', { method: 'POST', body: { monthId: created.id, ...section } })
-    }
+    await Promise.all(
+      defaults.map((section) =>
+        apiRequest('/api/sections', { method: 'POST', body: { monthId: created.id, ...section } }),
+      ),
+    )
     return true as const
   })
 }
@@ -79,11 +81,13 @@ export function computeStats(month: Month): DashboardStats {
     }
   })
 
-  const recentExpenses = month.sections
-    .flatMap((sec) =>
-      sec.expenses.map((e) => ({ ...e, sectionName: sec.name })),
-    )
-    .filter((e) => e.status === 'paid')
+  const paidExpenses: (Expense & { sectionName: string })[] = []
+  for (const sec of month.sections) {
+    for (const e of sec.expenses) {
+      if (e.status === 'paid') paidExpenses.push({ ...e, sectionName: sec.name })
+    }
+  }
+  const recentExpenses = paidExpenses
     .sort((a, b) => (b.paidAt ?? '').localeCompare(a.paidAt ?? ''))
     .slice(0, 8)
 

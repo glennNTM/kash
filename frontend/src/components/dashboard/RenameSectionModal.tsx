@@ -41,7 +41,8 @@ export default function RenameSectionModal({
   useEffect(() => {
     if (open && section) {
       reset({ name: section.name })
-      setTimeout(() => setFocus('name'), 50)
+      const id = setTimeout(() => setFocus('name'), 50)
+      return () => clearTimeout(id)
     }
   }, [open, section, reset, setFocus])
 
