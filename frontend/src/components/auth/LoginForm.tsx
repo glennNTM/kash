@@ -12,7 +12,7 @@ import googleIcon from '../../assets/google-color-svgrepo-com.svg'
 // Schéma de base (login) : name optionnel → un seul type partagé pour les deux modes.
 const authSchema = z.object({
   name: z.string().optional(),
-  email: z.string().email('Adresse e-mail invalide'),
+  email: z.email('Adresse e-mail invalide'),
   password: z.string().min(8, 'Mot de passe trop court (8 caractères minimum)'),
 })
 
