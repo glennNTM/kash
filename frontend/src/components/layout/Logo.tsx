@@ -7,13 +7,18 @@ type LogoProps = {
 }
 
 /**
- * Lockup de marque Kash : badge icône (accent) + wordmark.
- * Partagé entre le header et le footer de la landing.
+ * Wordmark Kash — Schibsted Grotesk 900, chasse très resserrée.
+ * Pas de badge ni d'icône : dans le système « relevé », la marque se signale
+ * par la densité de la typo, pas par un symbole rapporté.
  */
 export default function Logo({ to = '/', className = '' }: LogoProps) {
   return (
-    <Link to={to} className={`flex items-center gap-2 ${className}`}>
-        {APP_NAME}
+    <Link
+      to={to}
+      className={`font-display text-(--t-1) hover:text-(--t-1) ${className}`}
+      style={{ fontSize: '21px', fontWeight: 900, letterSpacing: '-0.045em' }}
+    >
+      {APP_NAME}
     </Link>
   )
 }

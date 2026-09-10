@@ -14,24 +14,14 @@
     "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.4.0",
     "@radix-ui/react-accordion": "^1.2.14",
-    "@radix-ui/react-dialog": "^1.1.15",
     "@tailwindcss/vite": "^4.3.0",
-    "@tanstack/react-query": "^5.101.0",
-    "better-auth": "^1.6.15",
-    "chart.js": "^4.5.1",
     "lucide-react": "^1.17.0",
     "react": "^19.2.6",
-    "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.2.6",
-    "react-hook-form": "^7.77.0",
-    "react-hot-toast": "^2.6.0",
     "react-intersection-observer": "^10.0.3",
     "react-router-dom": "^7.16.0",
-    "tailwindcss": "^4.3.0",
-    "zod": "^4.4.3",
-    "zustand": "^5.0.14"
+    "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom'
-import { Wallet, SlidersHorizontal, BarChart3, ArrowRight } from '../../lib/icons'
+import { Wallet, SlidersHorizontal, BarChart3 } from '../../lib/icons'
 import MicroTestimonial from './MicroTestimonial'
-import BackgroundRippleEffect from '../ui/BackgroundRippleEffect'
+import StoreBadges from '../ui/StoreBadges'
 
 const STEPS = [
   {
@@ -21,92 +20,80 @@ const STEPS = [
   },
 ]
 
+/**
+ * Première des trois ponctuations sombres (avec le CTA final et le footer).
+ * `data-tone="ink"` remappe les tokens de couleur pour tout ce bloc : les
+ * composants enfants (badges compris) s'inversent sans code dédié.
+ *
+ * La numérotation est portante ici — c'est une vraie séquence, pas un motif
+ * décoratif : on ne peut pas répartir avant d'avoir saisi ses revenus.
+ */
 export default function LandingSteps() {
   return (
     <>
       <section
         id="etapes"
-        className="relative isolate overflow-hidden scroll-mt-20 py-20 md:py-28 px-6"
-        style={{
-          background: 'var(--gradient-stat)',
-          borderRadius: '0 0 50% 50% / 0 0 80px 80px',
-        }}
+        data-tone="ink"
+        className="scroll-mt-20 py-20 md:py-28"
       >
-        <BackgroundRippleEffect />
-        <div className="relative max-w-6xl mx-auto md:px-4 lg:px-10">
-          <div className="text-center mb-14">
-            <h2
-              className="font-display font-bold text-white"
-              style={{ fontSize: 'clamp(34px, 5vw, 56px)' }}
+        <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
+          <div className="flex flex-col gap-4 mb-14 max-w-2xl">
+            <span
+              className="uppercase text-(--accent)"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 'var(--text-eyebrow)',
+                fontWeight: 700,
+                letterSpacing: '0.14em',
+              }}
             >
+              La méthode
+            </span>
+            <h2 style={{ fontSize: 'clamp(30px, 4.4vw, 48px)' }}>
               Aussi simple que 1, 2, 3
             </h2>
           </div>
 
-          {/* Cartes qui flippent au survol */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <ol className="flex flex-col border-t border-(--border-medium)">
             {STEPS.map(({ icon: Icon, title, description }, i) => (
-              <div key={title} className="group h-[300px] [perspective:1200px]">
-                <div
-                  className="relative w-full h-full [transform-style:preserve-3d] transition-[transform] group-hover:[transform:rotateY(180deg)]"
+              <li
+                key={title}
+                className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_minmax(0,280px)_1fr] items-start gap-x-6 gap-y-2 py-7 border-b border-(--border-subtle)"
+              >
+                <span
+                  className="tabular text-(--accent)"
                   style={{
-                    transitionDuration: '650ms',
-                    transitionTimingFunction: 'var(--ease-smooth)',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    letterSpacing: '0.06em',
+                    paddingTop: '4px',
                   }}
                 >
-                  {/* Face avant — numéro + icône + titre */}
-                  <div
-                    className="absolute inset-0 [backface-visibility:hidden] bg-(--bg-2) rounded-2xl border border-(--border-subtle) p-7 flex flex-col items-center justify-center text-center"
-                    style={{ boxShadow: 'var(--shadow-sm)' }}
-                  >
-                    <span
-                      className="font-display font-bold text-(--accent) leading-none"
-                      style={{ fontSize: 'var(--text-display-m)' }}
-                    >
-                      {i + 1}
-                    </span>
-                    <div className="w-14 h-14 rounded-2xl bg-(--accent-soft) flex items-center justify-center mt-4">
-                      <Icon size={26} className="text-(--accent)" strokeWidth={1.75} />
-                    </div>
-                    <h3
-                      className="font-semibold text-(--t-1) mt-4"
-                      style={{ fontSize: 'var(--text-heading-m)', fontFamily: 'var(--font-body)' }}
-                    >
-                      {title}
-                    </h3>
-                  </div>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
 
-                  {/* Face arrière — description */}
-                  <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white/20 border border-white/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-4">
-                    <h3
-                      className="font-semibold text-white"
-                      style={{ fontSize: 'var(--text-heading-m)', fontFamily: 'var(--font-body)' }}
-                    >
-                      {title}
-                    </h3>
-                    <p
-                      className="text-white/90"
-                      style={{ fontSize: 'var(--text-body-l)', lineHeight: '1.65' }}
-                    >
-                      {description}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                <h3
+                  className="font-body font-bold text-(--t-1) flex items-center gap-3"
+                  style={{ fontSize: 'var(--text-heading-m)', letterSpacing: '-0.01em' }}
+                >
+                  <Icon size={19} strokeWidth={1.9} className="text-(--accent) shrink-0" />
+                  {title}
+                </h3>
+
+                <p
+                  className="text-(--t-2) col-start-2 md:col-start-3"
+                  style={{ fontSize: 'var(--text-body-l)' }}
+                >
+                  {description}
+                </p>
+              </li>
             ))}
-          </div>
+          </ol>
 
-          {/* CTV + objection levée */}
-          <div className="flex flex-col items-center gap-3 mt-14">
-            <Link
-              to="/sign-up"
-              className="inline-flex items-center gap-2 whitespace-nowrap bg-white text-(--accent) font-semibold px-7 py-3.5 rounded-full hover:bg-white/90 transition-colors active:scale-97"
-              style={{ transitionDuration: 'var(--duration-fast)', fontSize: 'var(--text-body-l)' }}
-            >
-              Créer mon premier budget
-              <ArrowRight size={18} strokeWidth={2.5} />
-            </Link>
-            <span className="text-white/70" style={{ fontSize: 'var(--text-body-s)' }}>
+          <div className="flex flex-col gap-3 mt-12">
+            <StoreBadges />
+            <span className="text-(--t-3)" style={{ fontSize: 'var(--text-body-s)' }}>
               Gratuit, aucun paiement requis
             </span>
           </div>

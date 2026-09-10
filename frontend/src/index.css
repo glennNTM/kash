@@ -3,8 +3,8 @@
 @theme {
 
   /* Polices (chargées via Bunny Fonts dans index.html — aucun appel à Google) */
-  --font-display : "Caveat", "Brush Script MT", cursive;      /* titres : manuscrit */
-  --font-body    : "Manrope", "Helvetica Neue", sans-serif;   /* corps + sous-titres */
+  --font-display : "Schibsted Grotesk", "Helvetica Neue", sans-serif;      /* titres */
+  --font-body    : "Public Sans", "Helvetica Neue", sans-serif;            /* corps + sous-titres */
   --font-mono    : "JetBrains Mono", ui-monospace, "Consolas", monospace;  /* montants */
 
   /* Tailles de texte */
@@ -32,12 +32,12 @@
   --space-9  : 96px;
   --space-10 : 128px;
 
-  /* Border radius */
-  --radius-sm   : 8px;
-  --radius-md   : 12px;
-  --radius-lg   : 16px;
-  --radius-xl   : 20px;
-  --radius-2xl  : 28px;
+  /* Border radius — resserrés : le système « relevé » tranche net, il n'arrondit pas */
+  --radius-sm   : 3px;
+  --radius-md   : 4px;
+  --radius-lg   : 6px;
+  --radius-xl   : 8px;
+  --radius-2xl  : 10px;
   --radius-pill : 980px;
 
   /* Durées d'animation */
@@ -54,47 +54,79 @@
   --ease-sharp  : cubic-bezier(0.4, 0, 0.6, 1);
 }
 
-/* ── COULEURS (thème clair unique) ──────────────────────*/
+/* ── COULEURS — « Le relevé », thème clair ─────────────────
+   Registre du relevé bancaire : filets d'un pixel plutôt que des cartes
+   partout, chiffres alignés, aucun dégradé. Le sombre est une ponctuation
+   (3 sections sur 10), pas le fond général. */
 :root {
 
-  /* Fonds */
-  --bg-1     : #F7F7F5;   /* fond principal, blanc chaud */
-  --bg-2     : #FFFFFF;   /* cartes, surfaces élevées */
-  --bg-3     : #EFEFED;   /* inputs, hover, fond alterné */
-  --bg-4     : #E6E6E3;   /* surfaces enfoncées */
-  --bg-glass : rgba(247, 247, 245, 0.80); /* bottom nav, overlays */
+  /* Fonds — jamais de blanc pur */
+  --bg-1     : #F1F3F1;   /* fond principal, blanc cassé biaisé vert */
+  --bg-2     : #FAFBFA;   /* cartes, surfaces élevées */
+  --bg-3     : #E7EAE7;   /* inputs, hover, fond alterné */
+  --bg-4     : #DBDFDC;   /* surfaces enfoncées */
+  --bg-glass : rgba(241, 243, 241, 0.82); /* header collant */
 
-  /* Texte */
-  --t-1 : #181816;   /* texte principal */
-  --t-2 : #6B6B68;   /* texte secondaire */
-  --t-3 : #A8A8A5;   /* texte tertiaire, placeholders */
+  /* Texte — contrastes vérifiés contre --bg-1 */
+  --t-1 : #0C1512;   /* principal   — 16,8:1 */
+  --t-2 : #55605B;   /* secondaire  —  5,9:1 */
+  --t-3 : #656F6A;   /* légendes    —  4,7:1 */
 
-  /* Bordures */
-  --border-subtle : rgba(0, 0, 0, 0.06);
-  --border-medium : rgba(0, 0, 0, 0.11);
-  --border-strong : rgba(0, 0, 0, 0.22);
+  /* Filets — la signature du système */
+  --border-subtle : rgba(12, 21, 18, 0.07);
+  --border-medium : rgba(12, 21, 18, 0.13);
+  --border-strong : rgba(12, 21, 18, 0.26);
 
-  /* Ombres */
-  --shadow-sm   : 0 1px 8px rgba(0, 0, 0, 0.07);
-  --shadow-md   : 0 4px 20px rgba(0, 0, 0, 0.10);
-  --shadow-lg   : 0 12px 40px rgba(0, 0, 0, 0.13);
-  --shadow-glow : 0 0 24px rgba(26, 158, 110, 0.15);
+  /* Ombres — usage rare : le relief vient des filets, pas des ombres */
+  --shadow-sm : 0 1px 2px rgba(12, 21, 18, 0.05);
+  --shadow-md : 0 2px 12px rgba(12, 21, 18, 0.07);
+  --shadow-lg : 0 8px 32px rgba(12, 21, 18, 0.10);
 
-  /* Accent (vert — une seule couleur d'accent) */
-  --accent       : #1A9E6E;
-  --accent-hover : #168A5F;
-  --accent-soft  : rgba(26, 158, 110, 0.10);
-  --accent-rgb   : 26, 158, 110;
+  /* Accent — assombri pour tenir sur fond clair (4,8:1 sur --bg-1,
+     et 5,3:1 en blanc sur accent pour les boutons) */
+  --accent       : #0F7A57;
+  --accent-hover : #0B6247;
+  --accent-soft  : rgba(15, 122, 87, 0.10);
+  --accent-rgb   : 15, 122, 87;
 
   /* Sémantique */
-  --success : #1A9E6E;   /* payé, validé, objectif atteint */
-  --warning : #D97706;   /* attention, > 80% du budget */
-  --error   : #DC2626;   /* dépassement, erreur — rouge RARE */
-  --neutral : #6B6B68;
+  --success : #0F7A57;   /* payé, validé, objectif atteint */
+  --warning : #A85B06;   /* attention, > 80% du budget */
+  --error   : #B32020;   /* dépassement, erreur — rouge RARE */
+  --neutral : #55605B;
 
-  /* Dégradés */
-  --gradient-stat : linear-gradient(135deg, #1A9E6E 0%, #0D7A54 100%);
-  --gradient-goal : linear-gradient(135deg, #F0FBF6 0%, #E0F5EC 100%);
+  /* Ponctuations sombres — sections Steps, CTA final, Footer */
+  --ink-bg     : #0A1210;
+  --ink-bg-2   : #0F1A17;
+  --ink-t1     : #EAF0EC;
+  --ink-t2     : #8FA39A;
+  --ink-accent : #2ECC8F;
+}
+
+/* Sections sombres : on remappe les tokens plutôt que de dupliquer les
+   composants. Un bloc marqué `data-tone="ink"` inverse son propre contexte,
+   et tout ce qui est écrit avec `--t-1` / `--accent` / `--border-*` suit. */
+[data-tone="ink"] {
+  --bg-1 : var(--ink-bg);
+  --bg-2 : var(--ink-bg-2);
+  --bg-3 : #16221E;
+  --bg-4 : #1D2B26;
+
+  --t-1 : var(--ink-t1);
+  --t-2 : var(--ink-t2);
+  --t-3 : #7A8D85;
+
+  --border-subtle : rgba(234, 240, 236, 0.09);
+  --border-medium : rgba(234, 240, 236, 0.16);
+  --border-strong : rgba(234, 240, 236, 0.34);
+
+  --accent       : var(--ink-accent);
+  --accent-hover : #55DBA6;
+  --accent-soft  : rgba(46, 204, 143, 0.12);
+  --accent-rgb   : 46, 204, 143;
+
+  background : var(--bg-1);
+  color      : var(--t-1);
 }
 
 /* Reset + styles d'éléments dans @layer base : sinon ces règles non-layerées
@@ -120,7 +152,7 @@ body {
   font-size               : var(--text-body);
   color                   : var(--t-1);
   background              : var(--bg-1);
-  line-height             : 1.6;
+  line-height             : 1.62;
   -webkit-font-smoothing  : antialiased;
   -moz-osx-font-smoothing : grayscale;
 }
@@ -136,14 +168,15 @@ body {
 /* ── TYPOGRAPHIE DE BASE ────────────────────────────────*/
 h1, h2, h3, h4, h5, h6 {
   font-family    : var(--font-display);
-  font-weight    : 700;
-  line-height    : 1.2;
-  letter-spacing : -0.02em;
+  font-weight    : 900;
+  line-height    : 1.05;
+  letter-spacing : -0.035em;
   color          : var(--t-1);
+  text-wrap      : balance;
 }
 
 p {
-  line-height: 1.65;
+  line-height: 1.62;
   color      : var(--t-1);
 }
 
@@ -155,14 +188,6 @@ a {
 
 a:hover {
   color: var(--accent-hover);
-}
-
-/* Inputs : 17px minimum pour éviter le zoom automatique sur iOS */
-input,
-textarea,
-select {
-  font-family: var(--font-body);
-  font-size  : 17px;
 }
 
 /* ── ACCESSIBILITÉ ──────────────────────────────────────*/
@@ -182,7 +207,7 @@ select {
   border-radius : var(--radius-sm);
 }
 
-/* ── SCROLLBAR (optionnel, touche de finition) ──────────*/
+/* ── SCROLLBAR (touche de finition) ─────────────────────*/
 ::-webkit-scrollbar {
   width : 6px;
   height: 6px;
@@ -193,46 +218,17 @@ select {
 }
 
 ::-webkit-scrollbar-thumb {
-  background   : var(--border-strong);
-  border-radius: var(--radius-pill);
+  background: var(--border-strong);
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--t-3);
 }
 
-/* ── SKELETON (chargement) ──────────────────────────────*/
-/* Bloc « formé » avec balayage shimmer. Dégradé automatiquement en statique
-   sous prefers-reduced-motion (cf. bloc accessibilité ci-dessus). */
-@keyframes kash-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.skeleton {
-  background      : linear-gradient(90deg, var(--bg-3) 25%, var(--bg-4) 50%, var(--bg-3) 75%);
-  background-size : 200% 100%;
-  animation       : kash-shimmer 1.4s var(--ease-smooth) infinite;
-  border-radius   : var(--radius-md);
-}
-
-/* ── BACKGROUND RIPPLE (fond décoratif HeroCard) ────────*/
-.kash-ripple-grid {
-  background-image  : linear-gradient(var(--border-subtle) 1px, transparent 1px),
-                       linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
-  background-size   : 32px 32px;
-}
-
-.kash-ripple-halo {
-  --x: 50%;
-  --y: 50%;
-  background : radial-gradient(circle at var(--x) var(--y), var(--accent-soft), transparent 60%);
-  animation  : kash-ripple-pulse 3.6s var(--ease-smooth) infinite;
-}
-
-@keyframes kash-ripple-pulse {
-  0%, 100% { opacity: 0.6; }
-  50%      { opacity: 1; }
+/* ── CHIFFRES ───────────────────────────────────────────*/
+/* Tous les montants s'alignent en colonne : chasse fixe obligatoire. */
+.tabular {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── FADE-UP (entrée douce d'un bloc) ───────────────────*/
@@ -242,4 +238,3 @@ select {
 }
 
 } /* fin @layer base */
-

@@ -1,6 +1,5 @@
-import { X, Check } from '../../lib/icons'
+import { Minus, Check } from '../../lib/icons'
 import MicroTestimonial from './MicroTestimonial'
-import BackgroundRippleEffect from '../ui/BackgroundRippleEffect'
 
 const PAIN = [
   'Tu finis le mois sans savoir où est passé ton argent',
@@ -18,42 +17,41 @@ const RELIEF = [
   'Tu gères tes finances en 2 minutes par jour',
 ]
 
+/**
+ * Avant / après, en deux colonnes séparées par un filet.
+ *
+ * Pas de cartes colorées ici : dans le système « relevé », l'opposition se lit
+ * dans le contraste des marqueurs (tiret éteint contre coche en accent), pas
+ * dans deux blocs rouge et vert qui se disputent l'attention.
+ */
 export default function LandingProblem() {
   return (
-    <section className="relative isolate py-20 md:py-28 bg-(--bg-1)">
-      <BackgroundRippleEffect />
-      <div className="relative max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
-        <h2
-          className="font-display font-bold text-(--t-1) text-center mb-12 md:mb-16"
-          style={{ fontSize: 'clamp(34px, 5vw, 56px)', lineHeight: '1.1' }}
-        >
+    <section className="bg-(--bg-1) border-t border-(--border-subtle) py-20 md:py-28">
+      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
+        <h2 className="max-w-2xl mb-14" style={{ fontSize: 'clamp(30px, 4.4vw, 48px)' }}>
           La différence entre stresser et gérer
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-5">
-          {/* Douleur — rouge/corail */}
-          <div
-            className="rounded-2xl border p-7 md:p-8"
-            style={{
-              borderColor: 'rgba(220, 38, 38, 0.18)',
-              background: 'rgba(220, 38, 38, 0.04)',
-            }}
-          >
+        <div className="grid md:grid-cols-2">
+          {/* Sans méthode */}
+          <div className="md:pr-12 lg:pr-16 pb-10 md:pb-0 border-b md:border-b-0 md:border-r border-(--border-medium)">
             <h3
-              className="font-semibold text-(--t-1) mb-6"
-              style={{ fontSize: 'var(--text-heading-m)', fontFamily: 'var(--font-body)' }}
+              className="font-body font-bold text-(--t-3) uppercase mb-7"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 'var(--text-eyebrow)',
+                letterSpacing: '0.14em',
+              }}
             >
-              Sans méthode, tu…
+              Sans méthode
             </h3>
-            <ul className="flex flex-col gap-4">
+            <ul className="flex flex-col">
               {PAIN.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <span
-                    className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-                    style={{ background: 'rgba(220, 38, 38, 0.12)' }}
-                  >
-                    <X size={13} style={{ color: 'var(--error)' }} strokeWidth={3} />
-                  </span>
+                <li
+                  key={item}
+                  className="flex items-start gap-3 py-3.5 border-t border-(--border-subtle) first:border-t-0"
+                >
+                  <Minus size={15} className="text-(--t-3) shrink-0 mt-1" strokeWidth={2.5} />
                   <span className="text-(--t-2)" style={{ fontSize: 'var(--text-body)' }}>
                     {item}
                   </span>
@@ -62,20 +60,25 @@ export default function LandingProblem() {
             </ul>
           </div>
 
-          {/* Soulagement — vert */}
-          <div className="rounded-2xl border border-(--accent) bg-(--accent-soft) p-7 md:p-8">
+          {/* Avec Kash */}
+          <div className="md:pl-12 lg:pl-16 pt-10 md:pt-0">
             <h3
-              className="font-semibold text-(--t-1) mb-6"
-              style={{ fontSize: 'var(--text-heading-m)', fontFamily: 'var(--font-body)' }}
+              className="font-body font-bold text-(--accent) uppercase mb-7"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 'var(--text-eyebrow)',
+                letterSpacing: '0.14em',
+              }}
             >
-              Avec Kash, tu…
+              Avec Kash
             </h3>
-            <ul className="flex flex-col gap-4">
+            <ul className="flex flex-col">
               {RELIEF.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-(--accent)">
-                    <Check size={13} className="text-white" strokeWidth={3} />
-                  </span>
+                <li
+                  key={item}
+                  className="flex items-start gap-3 py-3.5 border-t border-(--border-subtle) first:border-t-0"
+                >
+                  <Check size={15} className="text-(--accent) shrink-0 mt-1" strokeWidth={2.75} />
                   <span className="text-(--t-1)" style={{ fontSize: 'var(--text-body)' }}>
                     {item}
                   </span>

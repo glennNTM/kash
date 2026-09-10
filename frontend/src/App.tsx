@@ -1,40 +1,20 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
-import Login from './pages/Login'
-import Onboarding from './pages/Onboarding'
-import DashboardLayout from './layouts/DashboardLayout'
-import Dashboard from './pages/Dashboard'
-import Statistiques from './pages/Statistiques'
-import Historique from './pages/Historique'
-import Objectifs from './pages/Objectifs'
-import Profil from './pages/Profil'
-import ProtectedRoute from './components/auth/ProtectedRoute'
-import { RequireBudget, RequireNoBudget } from './components/auth/OnboardingGate'
+import Legal from './pages/Legal'
 
+/**
+ * Site vitrine : une landing et trois pages légales. Aucune route de compte —
+ * l'inscription, la connexion et le budget vivent dans l'application mobile,
+ * qui consomme directement l'API.
+ */
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login mode="login" />} />
-        <Route path="/sign-up" element={<Login mode="register" />} />
-        {/* Routes privées : garde de session, puis garde d'onboarding */}
-        <Route element={<ProtectedRoute />}>
-          {/* Onboarding : interdit si l'utilisateur a déjà un budget */}
-          <Route element={<RequireNoBudget />}>
-            <Route path="/onboarding" element={<Onboarding />} />
-          </Route>
-          {/* Dashboard & co : exigent un budget, sinon → onboarding */}
-          <Route element={<RequireBudget />}>
-            <Route element={<DashboardLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/statistiques" element={<Statistiques />} />
-              <Route path="/historique" element={<Historique />} />
-              <Route path="/objectifs" element={<Objectifs />} />
-              <Route path="/profil" element={<Profil />} />
-            </Route>
-          </Route>
-        </Route>
+        <Route path="/cgu" element={<Legal doc="cgu" />} />
+        <Route path="/confidentialite" element={<Legal doc="confidentialite" />} />
+        <Route path="/mentions-legales" element={<Legal doc="mentions-legales" />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

@@ -1,48 +1,93 @@
-import { ArrowRight } from '../../lib/icons'
+import { Link } from 'react-router-dom'
 import Logo from './Logo'
-import { APP_NAME, CHARIOW_EBOOK_URL, LEGAL_LINKS } from '../../lib/constants'
+import { APP_NAME, APP_TAGLINE, LEGAL_LINKS, NAV_LINKS, SOCIAL_LINKS } from '../../lib/constants'
 
+/**
+ * Troisième et dernière ponctuation sombre : le footer prolonge le CTA final
+ * sans rupture de fond, pour que la page se termine sur un seul bloc.
+ */
 export default function SiteFooter() {
+  const year = new Date().getFullYear()
+
   return (
-    <footer className="bg-(--accent-soft) border-t border-(--border-subtle)">
-      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16">
-        {/* Bande CTA */}
-        <div className="flex flex-col md:flex-row items-center md:items-center justify-between gap-6 py-12 border-b border-(--border-subtle)">
-          <div className="flex flex-col items-center md:items-start gap-3 text-center md:text-left">
+    <footer data-tone="ink" className="border-t border-(--border-subtle)">
+      <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-14">
+        <div className="grid gap-10 md:grid-cols-[1fr_auto_auto] md:gap-16">
+          <div className="flex flex-col gap-3 max-w-xs">
             <Logo />
-            <p className="text-sm text-(--t-2) max-w-xs">
-              La méthode 50/30/20 pour reprendre le contrôle de vos finances.
+            <p className="text-(--t-2)" style={{ fontSize: 'var(--text-body-s)' }}>
+              {APP_TAGLINE}
             </p>
           </div>
-          <a
-            href={CHARIOW_EBOOK_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold bg-(--accent) text-white px-6 py-3 rounded-full hover:bg-(--accent-hover) transition-colors active:scale-97"
-            style={{ transitionDuration: 'var(--duration-fast)' }}
-          >
-            Obtenir l&apos;ebook
-            <ArrowRight size={16} />
-          </a>
-        </div>
 
-        {/* Bas de page : copyright + liens légaux */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-6">
-          <p className="text-sm text-(--t-2)">
-            © {new Date().getFullYear()} {APP_NAME}. Tous droits réservés.
-          </p>
-          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            {LEGAL_LINKS.map(({ label, href }) => (
+          <nav aria-label="Sections du site" className="flex flex-col gap-3">
+            <span
+              className="uppercase text-(--t-3)"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '9.5px',
+                fontWeight: 700,
+                letterSpacing: '0.14em',
+              }}
+            >
+              Le site
+            </span>
+            {NAV_LINKS.map(({ label, href }) => (
               <a
-                key={label}
-                href={href}
-                className="text-sm text-(--t-2) hover:text-(--accent) transition-colors"
-                style={{ transitionDuration: 'var(--duration-fast)' }}
+                key={href}
+                href={`/${href}`}
+                className="text-(--t-2) hover:text-(--t-1) transition-colors"
+                style={{ fontSize: 'var(--text-body-s)' }}
               >
                 {label}
               </a>
             ))}
           </nav>
+
+          <nav aria-label="Informations légales" className="flex flex-col gap-3">
+            <span
+              className="uppercase text-(--t-3)"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '9.5px',
+                fontWeight: 700,
+                letterSpacing: '0.14em',
+              }}
+            >
+              Légal
+            </span>
+            {LEGAL_LINKS.map(({ label, href }) => (
+              <Link
+                key={href}
+                to={href}
+                className="text-(--t-2) hover:text-(--t-1) transition-colors"
+                style={{ fontSize: 'var(--text-body-s)' }}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="mt-12 pt-6 border-t border-(--border-subtle) flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <p className="text-(--t-3)" style={{ fontSize: 'var(--text-caption)' }}>
+            © {year} {APP_NAME}. Tous droits réservés.
+          </p>
+
+          <div className="flex items-center gap-5">
+            {SOCIAL_LINKS.map(({ label, href }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-(--t-2) hover:text-(--t-1) transition-colors"
+                style={{ fontSize: 'var(--text-body-s)' }}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

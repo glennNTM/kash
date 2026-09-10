@@ -10,10 +10,10 @@
  * Usage : `style={{ fontFamily: fontDisplay }}`
  */
 
-/** Titres — manuscrit (Caveat). */
+/** Titres (Schibsted Grotesk). */
 export const fontDisplay = 'var(--font-display)'
 
-/** Corps & sous-titres (Manrope). */
+/** Corps & sous-titres (Public Sans). */
 export const fontBody = 'var(--font-body)'
 
 /** Montants & valeurs chiffrées (JetBrains Mono). */

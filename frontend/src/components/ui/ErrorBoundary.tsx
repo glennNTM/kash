@@ -36,8 +36,8 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
     return (
       <div className="min-h-dvh flex flex-col items-center justify-center text-center px-6 bg-(--bg-1)">
         <span
-          className="grid place-items-center size-20 rounded-full mb-6"
-          style={{ background: 'rgba(217,119,6,0.10)' }}
+          className="grid place-items-center size-20 mb-6"
+          style={{ background: 'rgba(168, 91, 6, 0.10)', borderRadius: 'var(--radius-md)' }}
         >
           <TriangleAlert size={34} strokeWidth={1.5} style={{ color: 'var(--warning)' }} />
         </span>
@@ -57,7 +57,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
         <button
           type="button"
           onClick={this.handleReload}
-          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-(--accent) text-white font-semibold transition-colors hover:bg-(--accent-hover) active:scale-97"
+          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-(--radius-md) bg-(--accent) text-white font-bold transition-colors hover:bg-(--accent-hover)"
           style={{ fontSize: 'var(--text-body-l)', transitionDuration: 'var(--duration-fast)' }}
         >
           <RotateCw size={18} />

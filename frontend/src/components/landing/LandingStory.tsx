@@ -1,19 +1,17 @@
 import { ArrowRight } from '../../lib/icons'
 import { CHARIOW_EBOOK_URL } from '../../lib/constants'
 import MicroTestimonial from './MicroTestimonial'
-import BackgroundRippleEffect from '../ui/BackgroundRippleEffect'
 
 export default function LandingStory() {
   return (
-    <section className="relative isolate py-20 md:py-28 bg-(--bg-1)">
-      <BackgroundRippleEffect />
-      <div className="relative max-w-5xl mx-auto px-6 md:px-10 lg:px-16">
-        <div className="grid md:grid-cols-[260px_1fr] gap-10 lg:gap-14 items-center">
-          {/* Photo fondateur — PLACEHOLDER (remplacer par une vraie photo souriante) */}
+    <section className="bg-(--bg-2) border-t border-(--border-subtle) py-20 md:py-28">
+      <div className="max-w-5xl mx-auto px-6 md:px-10 lg:px-16">
+        <div className="grid md:grid-cols-[260px_1fr] gap-10 lg:gap-16 items-start">
+          {/* PLACEHOLDER : remplacer par une vraie photo (portrait, souriant). */}
           <div className="flex justify-center md:justify-start">
             <div
-              className="w-48 h-48 md:w-full md:h-64 rounded-2xl border border-(--border-subtle) flex items-center justify-center text-center px-4"
-              style={{ background: 'var(--gradient-goal)' }}
+              className="w-48 h-48 md:w-full md:h-72 bg-(--bg-3) border border-(--border-medium) flex items-center justify-center text-center px-4"
+              style={{ borderRadius: 'var(--radius-md)' }}
             >
               <span className="text-(--t-3)" style={{ fontSize: 'var(--text-body-s)' }}>
                 [ Ta photo ici ]
@@ -23,14 +21,26 @@ export default function LandingStory() {
 
           {/* Texte à la première personne */}
           <div className="flex flex-col gap-5">
-            <h2
-              className="font-display font-bold text-(--t-1)"
-              style={{ fontSize: 'clamp(34px, 5vw, 56px)', lineHeight: '1.1' }}
+            <span
+              className="uppercase text-(--t-3)"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 'var(--text-eyebrow)',
+                fontWeight: 700,
+                letterSpacing: '0.14em',
+              }}
             >
+              Pourquoi Kash existe
+            </span>
+
+            <h2 style={{ fontSize: 'clamp(30px, 4.4vw, 48px)' }}>
               Je suis un salarié comme toi
             </h2>
 
-            <div className="flex flex-col gap-4 text-(--t-2)" style={{ fontSize: 'var(--text-body-l)', lineHeight: '1.7' }}>
+            <div
+              className="flex flex-col gap-4 text-(--t-2)"
+              style={{ fontSize: 'var(--text-body-l)', lineHeight: '1.62' }}
+            >
               <p>
                 À mon premier vrai salaire, j'étais fier — puis paumé. Chaque
                 fin de mois, l'argent avait disparu sans que je sache où. Pas
@@ -46,19 +56,18 @@ export default function LandingStory() {
               </p>
             </div>
 
-            {/* Mention ebook (ressource complémentaire) */}
-            <div className="flex flex-wrap items-center gap-4 pt-1">
-              <a
-                href={CHARIOW_EBOOK_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-(--accent) font-semibold hover:underline"
-                style={{ fontSize: 'var(--text-body)' }}
-              >
-                J'ai aussi écrit le guide complet de la méthode
-                <ArrowRight size={16} strokeWidth={2.5} />
-              </a>
-            </div>
+            {/* Premier CTA ebook — volontairement implicite : il attise la
+                curiosité, la section dédiée plus bas est explicite. */}
+            <a
+              href={CHARIOW_EBOOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 self-start font-bold text-(--accent) hover:text-(--accent-hover) border-b border-(--accent) pb-0.5 mt-1"
+              style={{ fontSize: 'var(--text-body)' }}
+            >
+              J'ai écrit tout ce que j'ai appris en chemin
+              <ArrowRight size={16} strokeWidth={2.5} />
+            </a>
           </div>
         </div>
 

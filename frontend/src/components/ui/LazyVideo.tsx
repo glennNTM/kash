@@ -50,6 +50,9 @@ export default function LazyVideo({ sources, poster, label, className }: LazyVid
           {sources.map((s) => (
             <source key={s.src} src={s.src} type={s.type} />
           ))}
+          {/* TODO(a11y) : ajouter <track kind="captions" srcLang="fr" src="…" />
+              en même temps que la vraie vidéo de démo. Un track pointant vers un
+              fichier inexistant serait pire que pas de track du tout. */}
           Votre navigateur ne supporte pas la lecture vidéo.
         </video>
       ) : (
@@ -59,13 +62,10 @@ export default function LazyVideo({ sources, poster, label, className }: LazyVid
           style={
             poster
               ? { backgroundImage: `url(${poster})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-              : { background: 'var(--gradient-goal)' }
+              : { background: 'var(--bg-3)' }
           }
         >
-          <span
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-(--accent) text-white"
-            style={{ boxShadow: 'var(--shadow-glow)' }}
-          >
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-(--accent) text-white">
             <Play size={26} fill="white" strokeWidth={0} className="ml-1" />
           </span>
         </div>
