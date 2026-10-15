@@ -1,5 +1,5 @@
 import { Check } from '../../lib/icons'
-import { DEMO_INCOME, DEMO_SECTIONS } from '../../lib/constants'
+import { CTA_REASSURANCE, DEMO_INCOME, DEMO_SECTIONS } from '../../lib/constants'
 import { formatAmount } from '../../lib/format'
 import LedgerTicker from '../ui/LedgerTicker'
 import PhoneMockup from '../ui/PhoneMockup'
@@ -68,7 +68,7 @@ export default function LandingHero() {
             <div className="flex flex-col gap-3 pt-2">
               <StoreBadges />
               <span className="text-(--t-3)" style={{ fontSize: 'var(--text-body-s)' }}>
-                Gratuit · Aucun paiement requis
+                {CTA_REASSURANCE}
               </span>
             </div>
           </div>

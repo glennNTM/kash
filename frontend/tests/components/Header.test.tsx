@@ -27,6 +27,12 @@ describe('SiteHeader', () => {
     expect(screen.queryByText(/se connecter/i)).not.toBeInTheDocument()
   })
 
+  it('propose un lien d’évitement vers le contenu principal', () => {
+    renderHeader()
+
+    expect(screen.getByRole('link', { name: /aller au contenu/i })).toHaveAttribute('href', '#contenu')
+  })
+
   it('renvoie le CTA vers la section de téléchargement, pas vers un store précis', () => {
     renderHeader()
 

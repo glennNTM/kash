@@ -70,7 +70,7 @@
   /* Texte — contrastes vérifiés contre --bg-1 */
   --t-1 : #0C1512;   /* principal   — 16,8:1 */
   --t-2 : #55605B;   /* secondaire  —  5,9:1 */
-  --t-3 : #656F6A;   /* légendes    —  4,7:1 */
+  --t-3 : #5E6863;   /* légendes    —  5,2:1 (4,8:1 sur --bg-3) */
 
   /* Filets — la signature du système */
   --border-subtle : rgba(12, 21, 18, 0.07);

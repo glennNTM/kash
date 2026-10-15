@@ -29,24 +29,36 @@ export function AccordionItem({
   )
 }
 
+/**
+ * `heading={false}` : Radix enveloppe le déclencheur dans un `<h3>`, ce qui
+ * convient à la FAQ (une question = un titre) mais pas à un simple « Voir le
+ * détail » placé sous un titre existant — on rend alors un `<div>`.
+ */
 export function AccordionTrigger({
   children,
+  heading = true,
   ...props
-}: ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>) {
-  return (
-    <AccordionPrimitive.Header>
-      <AccordionPrimitive.Trigger
-        className="group flex w-full items-center justify-between gap-4 py-5 text-left text-(--t-1) font-semibold transition-colors hover:text-(--accent)"
-        style={{ fontSize: 'var(--text-heading-m)' }}
-        {...props}
-      >
-        {children}
-        <ChevronDown
-          size={18}
-          strokeWidth={2.25}
-          className="shrink-0 text-(--t-3) transition-transform duration-(--duration-fast) group-data-[state=open]:rotate-180"
-        />
-      </AccordionPrimitive.Trigger>
+}: ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & { heading?: boolean }) {
+  const trigger = (
+    <AccordionPrimitive.Trigger
+      className="group flex w-full items-center justify-between gap-4 py-5 text-left text-(--t-1) font-semibold transition-colors hover:text-(--accent)"
+      style={{ fontSize: 'var(--text-heading-m)' }}
+      {...props}
+    >
+      {children}
+      <ChevronDown
+        size={18}
+        strokeWidth={2.25}
+        className="shrink-0 text-(--t-3) transition-transform duration-(--duration-fast) group-data-[state=open]:rotate-180"
+      />
+    </AccordionPrimitive.Trigger>
+  )
+
+  return heading ? (
+    <AccordionPrimitive.Header>{trigger}</AccordionPrimitive.Header>
+  ) : (
+    <AccordionPrimitive.Header asChild>
+      <div>{trigger}</div>
     </AccordionPrimitive.Header>
   )
 }

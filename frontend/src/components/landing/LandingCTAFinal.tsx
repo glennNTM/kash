@@ -1,5 +1,6 @@
 import StoreBadges from '../ui/StoreBadges'
 import LedgerTicker from '../ui/LedgerTicker'
+import { CTA_REASSURANCE } from '../../lib/constants'
 
 /**
  * Deuxième ponctuation sombre. Porte l'ancre `#telecharger` : c'est ici que
@@ -41,7 +42,7 @@ export default function LandingCTAFinal() {
         <div className="flex flex-col gap-3">
           <StoreBadges />
           <span className="text-(--t-3)" style={{ fontSize: 'var(--text-body-s)' }}>
-            Gratuit · Aucun paiement requis
+            {CTA_REASSURANCE}
           </span>
         </div>
 

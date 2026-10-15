@@ -40,7 +40,7 @@ export default function Legal({ doc }: { doc: LegalDoc }) {
   return (
     <div className="min-h-dvh flex flex-col bg-(--bg-1)">
       <SiteHeader />
-      <main className="flex-1">
+      <main id="contenu" tabIndex={-1} className="flex-1 outline-none">
         <div className="max-w-3xl mx-auto px-6 md:px-10 py-16 md:py-24 flex flex-col gap-6">
           <h1 style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}>{title}</h1>
           <p className="text-(--t-2)" style={{ fontSize: 'var(--text-body-l)' }}>

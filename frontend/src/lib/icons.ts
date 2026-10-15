@@ -35,6 +35,14 @@ export {
   Play,
   BookOpen,
 
+  // Réassurance & piliers
+  Gift,
+  Unlink,
+  Banknote,
+  Eye,
+  Bell,
+  Repeat,
+
   // Écran d'erreur global
   TriangleAlert,
   RotateCw,

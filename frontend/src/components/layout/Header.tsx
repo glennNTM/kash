@@ -26,6 +26,14 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-(--border-medium) bg-(--bg-glass) backdrop-blur-md">
+      {/* Lien d'évitement : premier arrêt clavier, invisible tant qu'il n'a pas le focus. */}
+      <a
+        href="#contenu"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-60 focus:bg-(--t-1) focus:text-(--bg-2) focus:px-4 focus:py-2.5 focus:rounded-(--radius-md) text-sm font-bold"
+      >
+        Aller au contenu
+      </a>
+
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 h-14 md:h-16">
           {/* Gauche — logo */}

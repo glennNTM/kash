@@ -7,6 +7,9 @@ export const APP_TAGLINE = 'La méthode 50/30/20, en FCFA, sur mobile.'
 export const APP_STORE_URL = '#'
 export const PLAY_STORE_URL = '#'
 
+/** Micro-réassurance sous chaque groupe de badges : un seul libellé partout. */
+export const CTA_REASSURANCE = 'Gratuit · Sans connexion bancaire'
+
 // TODO: remplacer par l'URL réelle de l'ebook sur Chariow.
 export const CHARIOW_EBOOK_URL = '#'
 
